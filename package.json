@@ -1,0 +1,35 @@
+{
+  "name": "arc-progress",
+  "version": "0.0.1-beta",
+  "description": "arc-progress circular-progress progress",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --config build/dev.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "arc-progress",
+    "circular-progress",
+    "progress"
+  ],
+  "author": "Hzy0913",
+  "license": "ISC",
+  "devDependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "typescript": "^3.6.2",
+    "chalk": "^2.4.2",
+    "clean-webpack-plugin": "^1.0.0",
+    "css-loader": "^2.1.0",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "friendly-errors-webpack-plugin": "^1.7.0",
+    "html-webpack-plugin": "^3.2.0",
+    "progress-bar-webpack-plugin": "^1.12.1",
+    "rimraf": "^3.0.0",
+    "style-loader": "^0.23.1",
+    "vconsole": "^3.2.2",
+    "webpack": "^4.28.3",
+    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.14"
+  }
+}

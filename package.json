@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --config build/dev.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rimraf lib && webpack --config build/prd.js && npm run movedts && rimraf lib/src",
+    "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts"
   },
   "keywords": [
     "arc-progress",

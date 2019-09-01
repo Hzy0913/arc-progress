@@ -10,6 +10,16 @@ interface options {
   el: string | HTMLElement,
 }
 
+interface updateOptions {
+  width?: number,
+  height?: number,
+  arcStart?: number,
+  arcEnd?: number,
+  progress: number,
+  value?: string,
+  el?: string | HTMLElement,
+}
+
 class ArcProgress {
   public width: number;
   public height: number;
@@ -22,6 +32,7 @@ class ArcProgress {
   private percentage: number = 0;
   private speed: number = 1;
   private textValue: number = 0;
+  private type: string = 'increase';
 
   constructor({width, height, el, arcStart, arcEnd, progress, value}: options) {
     this.width = width || 200;
@@ -81,6 +92,7 @@ class ArcProgress {
   private drawText() {
     const ctx = this.ctx;
     const frequency = this.progress / this.speed;
+    console.log(this.progress, frequency)
     let increaseValue = Number(this.value) / frequency;
     let decimal: number;
     let text: string;
@@ -121,30 +133,6 @@ class ArcProgress {
     ctx.font = '40px';
     ctx.fillText(text, 60, 75);
 
-    // ctx.beginPath()
-    // ctx.fillStyle = '#000000';
-    // ctx.font = '40px';
-    // ctx.setTextAlign('center');
-    // ctx.fillText(`${this.percentage * 100}`, 60, 75);
-    // ctx.closePath();
-    // ctx.setFontSize(14);
-    // ctx.fillText('%', 90, 75);
-    // // ctx.setFontSize(14);
-    // ctx.fillText('总完成情况', 70, 110);
-
-
-    // const degreeCount = this.arcEnd - this.arcStart;
-    // const progress = degreeCount * this.percentage + this.arcStart;
-    //
-    // ctx.beginPath();
-    // ctx.lineWidth = 12;
-    // ctx.lineCap = 'round';
-    // ctx.strokeStyle = '#6bd5c8'; // 设置圆环的颜色
-    //
-    // ctx.arc(100, 100, 100 - 12 , PI * this.arcStart, PI * progress , false);
-    //
-    // ctx.stroke();
-    // ctx.closePath();
   }
 
   private requestAnimationFrame(cb) {
@@ -152,9 +140,11 @@ class ArcProgress {
   }
 
   private accumulation() {
-    this.percentage += this.speed;
-
-
+    if (this.type === 'increase') {
+      this.percentage += this.speed;
+    } else {
+      this.percentage -= this.speed;
+    }
   }
 
   private drawPregressAnimate = () => {
@@ -163,16 +153,26 @@ class ArcProgress {
     this.drawPregress();
     this.drawText();
 
-    if (this.percentage < this.progress) {
+    if (this.type === 'increase' && this.percentage < this.progress) {
+      this.accumulation();
+      this.requestAnimationFrame(this.drawPregressAnimate);
+    } else if (this.type === 'reduce' && this.percentage > this.progress) {
       this.accumulation();
       this.requestAnimationFrame(this.drawPregressAnimate);
     }
 
   }
 
+  public updateProgress({progress, value}: updateOptions) {
 
+    this.type = progress * 100 > this.progress ? 'increase' : 'reduce';
 
+    this.progress = progress * 100;
+    this.value = value;
+    this.drawPregressAnimate();
 
   }
+
+}
 
 export default ArcProgress;

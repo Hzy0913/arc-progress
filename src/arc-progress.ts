@@ -8,6 +8,7 @@ interface options {
   progress: number,
   value?: string,
   el: string | HTMLElement,
+  animationEnd?: (any) => void,
 }
 
 interface updateOptions {
@@ -33,8 +34,10 @@ class ArcProgress {
   private speed: number = 1;
   private textValue: number = 0;
   private type: string = 'increase';
+  private isEnd: boolean = false;
+  private animationEnd: (any) => void;
 
-  constructor({width, height, el, arcStart, arcEnd, progress, value}: options) {
+  constructor({width, height, el, arcStart, arcEnd, progress, value, animationEnd = () => {}}: options) {
     this.width = width || 200;
     this.height = height || 200;
     this.arcStart = arcStart || 0.8;
@@ -42,6 +45,7 @@ class ArcProgress {
     this.progress = progress * 100;
     this.value = value;
     this.el = el;
+    this.animationEnd = animationEnd;
 
     this.init();
   }
@@ -87,6 +91,9 @@ class ArcProgress {
 
     ctx.stroke();
     ctx.closePath();
+    if (this.isEnd) {
+      this.animationEnd(this);
+    }
   }
 
   private drawText() {
@@ -119,7 +126,7 @@ class ArcProgress {
     }
     this.textValue += increaseValue;
 
-    if (this.percentage === this.progress) {
+    if (this.isEnd) {
       this.textValue = Number(this.value);
       text = this.value;
     } else if (!isIntValue) {
@@ -145,13 +152,16 @@ class ArcProgress {
     } else {
       this.percentage -= this.speed;
     }
+
   }
 
   private drawPregressAnimate = () => {
+    this.isEnd = this.percentage === this.progress;
+
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.drawBackground();
-    this.drawPregress();
     this.drawText();
+    this.drawPregress();
 
     if (this.type === 'increase' && this.percentage < this.progress) {
       this.accumulation();
@@ -161,10 +171,11 @@ class ArcProgress {
       this.requestAnimationFrame(this.drawPregressAnimate);
     }
 
+
   }
 
   public updateProgress({progress, value}: updateOptions) {
-
+    if (!this.isEnd) return;
     this.type = progress * 100 > this.progress ? 'increase' : 'reduce';
 
     this.progress = progress * 100;

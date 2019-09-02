@@ -7,6 +7,7 @@ interface options {
   arcEnd?: number,
   progress: number,
   value?: string,
+  thickness?: number,
   el: string | HTMLElement,
   animationEnd?: (any) => void,
 }
@@ -35,9 +36,10 @@ class ArcProgress {
   private textValue: number = 0;
   private type: string = 'increase';
   private isEnd: boolean = false;
+  private thickness: number;
   private animationEnd: (any) => void;
 
-  constructor({width, height, el, arcStart, arcEnd, progress, value, animationEnd = () => {}}: options) {
+  constructor({width, height, el, arcStart, arcEnd, progress, value, thickness, animationEnd = () => {}}: options) {
     this.width = width || 200;
     this.height = height || 200;
     this.arcStart = arcStart || 0.8;
@@ -45,6 +47,7 @@ class ArcProgress {
     this.progress = progress * 100;
     this.value = value;
     this.el = el;
+    this.thickness = thickness || 12;
     this.animationEnd = animationEnd;
 
     this.init();
@@ -66,11 +69,11 @@ class ArcProgress {
     const PI = Math.PI;
 
     ctx.beginPath();
-    ctx.lineWidth = 12;
+    ctx.lineWidth = this.thickness;
     ctx.lineCap = 'round';
-    ctx.strokeStyle = '#efefef'; // 设置圆环的颜色
+    ctx.strokeStyle = '#efefef';
 
-    ctx.arc(100, 100, 100 - 12 , PI * this.arcStart, PI * this.arcEnd, false);
+    ctx.arc(100, 100, 100 - this.thickness , PI * this.arcStart, PI * this.arcEnd, false);
     ctx.stroke();
     ctx.closePath();
   }
@@ -83,11 +86,11 @@ class ArcProgress {
     const progress = degreeCount * (this.percentage/100) + this.arcStart;
 
     ctx.beginPath();
-    ctx.lineWidth = 12;
+    ctx.lineWidth = this.thickness;
     ctx.lineCap = 'round';
-    ctx.strokeStyle = '#6bd5c8'; // 设置圆环的颜色
+    ctx.strokeStyle = '#6bd5c8';
 
-    ctx.arc(100, 100, 100 - 12 , PI * this.arcStart, PI * progress , false);
+    ctx.arc(100, 100, 100 - this.thickness, PI * this.arcStart, PI * progress , false);
 
     ctx.stroke();
     ctx.closePath();
@@ -135,7 +138,6 @@ class ArcProgress {
       text = String(this.textValue);
     }
 
-
     ctx.fillStyle = '#000000';
     ctx.font = '40px';
     ctx.fillText(text, 60, 75);
@@ -170,8 +172,6 @@ class ArcProgress {
       this.accumulation();
       this.requestAnimationFrame(this.drawPregressAnimate);
     }
-
-
   }
 
   public updateProgress({progress, value}: updateOptions) {

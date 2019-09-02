@@ -8,6 +8,9 @@ interface options {
   progress: number,
   value?: string,
   thickness?: number,
+  emptyColor?: string,
+  fillColor?: string,
+  lineCap?: string,
   el: string | HTMLElement,
   animationEnd?: (any) => void,
 }
@@ -38,8 +41,12 @@ class ArcProgress {
   private isEnd: boolean = false;
   private thickness: number;
   private animationEnd: (any) => void;
+  private emptyColor: string = '#efefef';
+  private fillColor: string = '#6bd5c8';
+  private lineCap: string = 'round';
 
-  constructor({width, height, el, arcStart, arcEnd, progress, value, thickness, animationEnd = () => {}}: options) {
+
+  constructor({width, height, el, arcStart, arcEnd, progress, value, thickness, emptyColor, fillColor, lineCap, animationEnd = () => {}}: options) {
     this.width = width || 200;
     this.height = height || 200;
     this.arcStart = arcStart || 0.8;
@@ -49,6 +56,9 @@ class ArcProgress {
     this.el = el;
     this.thickness = thickness || 12;
     this.animationEnd = animationEnd;
+    this.emptyColor = emptyColor || this.emptyColor;
+    this.fillColor = fillColor || this.fillColor;
+    this.lineCap = lineCap || this.lineCap;
 
     this.init();
   }
@@ -70,8 +80,8 @@ class ArcProgress {
 
     ctx.beginPath();
     ctx.lineWidth = this.thickness;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#efefef';
+    ctx.lineCap = this.lineCap;
+    ctx.strokeStyle = this.emptyColor;
 
     ctx.arc(100, 100, 100 - this.thickness , PI * this.arcStart, PI * this.arcEnd, false);
     ctx.stroke();
@@ -87,8 +97,8 @@ class ArcProgress {
 
     ctx.beginPath();
     ctx.lineWidth = this.thickness;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#6bd5c8';
+    ctx.lineCap = this.lineCap;
+    ctx.strokeStyle = this.fillColor;
 
     ctx.arc(100, 100, 100 - this.thickness, PI * this.arcStart, PI * progress , false);
 

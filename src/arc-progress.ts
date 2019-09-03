@@ -11,6 +11,7 @@ interface options {
   emptyColor?: string,
   fillColor?: string,
   lineCap?: string,
+  speed?: number,
   el: string | HTMLElement,
   animation?: boolean | number,
   animationEnd?: (any) => void,
@@ -47,7 +48,7 @@ class ArcProgress {
   private fillColor: string = '#6bd5c8';
   private lineCap: string = 'round';
 
-  constructor({width, height, el, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, animationEnd = () => {}}: options) {
+  constructor({width, height, el, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, animationEnd = () => {}}: options) {
     this.width = width || 200;
     this.height = height || 200;
     this.arcStart = arcStart
@@ -61,6 +62,7 @@ class ArcProgress {
     this.fillColor = fillColor || this.fillColor;
     this.lineCap = lineCap || this.lineCap;
     this.animation = animation || true;
+    this.setSpeed(speed);
 
     this.init();
   }
@@ -107,6 +109,16 @@ class ArcProgress {
     const startPI = start * PI;
 
     return {start: startPI, end: endPI};
+  }
+
+  private setSpeed(speed: number): void {
+    if (speed) {
+      if (speed > 0) {
+        this.speed += speed / 40;
+      } else {
+        this.speed += speed / 101;
+      }
+    }
   }
 
   private computedText(): string {
@@ -179,8 +191,12 @@ class ArcProgress {
   private accumulation() {
     if (this.type === 'increase') {
       this.percentage += this.speed;
+      if (this.percentage > this.progress)
+        this.percentage = this.progress
     } else {
       this.percentage -= this.speed;
+      if (this.percentage < this.progress)
+        this.percentage = this.progress
     }
   }
 

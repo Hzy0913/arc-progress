@@ -1,3 +1,3 @@
-export function isInt(number: number) {
-  return number === parseInt(String(number));
+export function isInt(value: string = '') {
+  return value.split('.').length === 1;
 }

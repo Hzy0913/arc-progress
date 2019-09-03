@@ -12,6 +12,7 @@ interface options {
   fillColor?: string,
   lineCap?: string,
   el: string | HTMLElement,
+  animation?: boolean | number,
   animationEnd?: (any) => void,
 }
 
@@ -34,6 +35,7 @@ class ArcProgress {
   public arcEnd: number;
   public progress: number;
   public value: string;
+  public animation: boolean | number;
   private percentage: number = 0;
   private speed: number = 1;
   private textValue: number = 0;
@@ -45,11 +47,11 @@ class ArcProgress {
   private fillColor: string = '#6bd5c8';
   private lineCap: string = 'round';
 
-  constructor({width, height, el, arcStart, arcEnd, progress, value, thickness, emptyColor, fillColor, lineCap, animationEnd = () => {}}: options) {
+  constructor({width, height, el, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, animationEnd = () => {}}: options) {
     this.width = width || 200;
     this.height = height || 200;
-    this.arcStart = arcStart || 144;
-    this.arcEnd = arcEnd || 396;
+    this.arcStart = arcStart
+    this.arcEnd = arcEnd
     this.progress = progress * 100;
     this.value = value;
     this.el = el;
@@ -58,6 +60,7 @@ class ArcProgress {
     this.emptyColor = emptyColor || this.emptyColor;
     this.fillColor = fillColor || this.fillColor;
     this.lineCap = lineCap || this.lineCap;
+    this.animation = animation || true;
 
     this.init();
   }
@@ -70,7 +73,7 @@ class ArcProgress {
     el.appendChild(canvas);
     this.ctx = canvas.getContext('2d');
 
-    this.drawPregressAnimate();
+    this.drawProgressAnimate();
   }
 
   private drawBackground() {
@@ -181,7 +184,10 @@ class ArcProgress {
     }
   }
 
-  private drawPregressAnimate = () => {
+  private drawProgressAnimate = () => {
+    if (this.animation === false) {
+      this.percentage = this.progress;
+    }
     this.isEnd = this.percentage === this.progress;
 
     this.ctx.clearRect(0, 0, this.width, this.height);
@@ -191,10 +197,10 @@ class ArcProgress {
 
     if (this.type === 'increase' && this.percentage < this.progress) {
       this.accumulation();
-      this.requestAnimationFrame(this.drawPregressAnimate);
+      this.requestAnimationFrame(this.drawProgressAnimate);
     } else if (this.type === 'reduce' && this.percentage > this.progress) {
       this.accumulation();
-      this.requestAnimationFrame(this.drawPregressAnimate);
+      this.requestAnimationFrame(this.drawProgressAnimate);
     }
   }
 
@@ -204,7 +210,7 @@ class ArcProgress {
 
     this.progress = progress * 100;
     this.value = value;
-    this.drawPregressAnimate();
+    this.drawProgressAnimate();
   }
 
 }

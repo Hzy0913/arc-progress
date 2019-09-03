@@ -45,12 +45,11 @@ class ArcProgress {
   private fillColor: string = '#6bd5c8';
   private lineCap: string = 'round';
 
-
   constructor({width, height, el, arcStart, arcEnd, progress, value, thickness, emptyColor, fillColor, lineCap, animationEnd = () => {}}: options) {
     this.width = width || 200;
     this.height = height || 200;
-    this.arcStart = arcStart || 0.8;
-    this.arcEnd = arcEnd || 2.2;
+    this.arcStart = arcStart || 144;
+    this.arcEnd = arcEnd || 396;
     this.progress = progress * 100;
     this.value = value;
     this.el = el;
@@ -77,30 +76,47 @@ class ArcProgress {
   private drawBackground() {
     const ctx = this.ctx;
     const PI = Math.PI;
+    const conversionRate = 180; //  360/2
+    const start = this.arcStart / conversionRate * PI;
+    const end = this.arcEnd / conversionRate * PI;
 
     ctx.beginPath();
     ctx.lineWidth = this.thickness;
     ctx.lineCap = this.lineCap;
     ctx.strokeStyle = this.emptyColor;
 
-    ctx.arc(100, 100, 100 - this.thickness , PI * this.arcStart, PI * this.arcEnd, false);
+    ctx.arc(100, 100, 100 - this.thickness, start, end, false);
     ctx.stroke();
     ctx.closePath();
   }
 
+  private computedArc() {
+    const PI = Math.PI;
+    const conversionRate = 180; //  360/2
+
+    const start = this.arcStart / conversionRate;
+    const end = this.arcEnd / conversionRate;
+
+    const degreeCount = end - start;
+    const progress = degreeCount * (this.percentage/100) + start;
+    const endPI = progress * PI;
+
+    const startPI = start * PI;
+
+    return {start: startPI, end: endPI};
+  }
+
   private drawPregress() {
     const ctx = this.ctx;
-    const PI = Math.PI;
 
-    const degreeCount = this.arcEnd - this.arcStart;
-    const progress = degreeCount * (this.percentage/100) + this.arcStart;
+    const {start, end} = this.computedArc();
 
     ctx.beginPath();
     ctx.lineWidth = this.thickness;
     ctx.lineCap = this.lineCap;
     ctx.strokeStyle = this.fillColor;
 
-    ctx.arc(100, 100, 100 - this.thickness, PI * this.arcStart, PI * progress , false);
+    ctx.arc(100, 100, 100 - this.thickness, start, end, false);
 
     ctx.stroke();
     ctx.closePath();
@@ -112,7 +128,7 @@ class ArcProgress {
   private drawText() {
     const ctx = this.ctx;
     const frequency = this.progress / this.speed;
-    console.log(this.progress, frequency)
+
     let increaseValue = Number(this.value) / frequency;
     let decimal: number;
     let text: string;
@@ -151,7 +167,6 @@ class ArcProgress {
     ctx.fillStyle = '#000000';
     ctx.font = '40px';
     ctx.fillText(text, 60, 75);
-
   }
 
   private requestAnimationFrame(cb) {
@@ -164,7 +179,6 @@ class ArcProgress {
     } else {
       this.percentage -= this.speed;
     }
-
   }
 
   private drawPregressAnimate = () => {
@@ -191,7 +205,6 @@ class ArcProgress {
     this.progress = progress * 100;
     this.value = value;
     this.drawPregressAnimate();
-
   }
 
 }

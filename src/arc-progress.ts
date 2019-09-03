@@ -106,6 +106,41 @@ class ArcProgress {
     return {start: startPI, end: endPI};
   }
 
+  private computedText(): string {
+    const frequency = this.progress / this.speed;
+    let increaseValue = Number(this.value) / frequency;
+    let decimal: number;
+
+    const isIntValue = isInt(this.value);
+    if (isIntValue) {
+      increaseValue = Math.floor(increaseValue);
+      if (!(increaseValue % 5)) {
+        increaseValue -= 1;
+      }
+    } else {
+      decimal = this.value.split('.')[1].length;
+      increaseValue = Number(increaseValue.toFixed(decimal));
+
+      if (!(increaseValue * Math.pow(10,decimal) % 5)) {
+        increaseValue -= 1 / Math.pow(10,decimal);
+      }
+    }
+
+    if (this.type === 'increase') {
+      this.textValue += increaseValue;
+    } else {
+      this.textValue -= increaseValue;
+    }
+
+    if (this.isEnd) {
+      return this.value;
+    } else if (!isIntValue) {
+      return this.textValue.toFixed(decimal)
+    } else {
+      return String(this.textValue);
+    }
+  }
+
   private drawPregress() {
     const ctx = this.ctx;
 
@@ -127,42 +162,7 @@ class ArcProgress {
 
   private drawText() {
     const ctx = this.ctx;
-    const frequency = this.progress / this.speed;
-
-    let increaseValue = Number(this.value) / frequency;
-    let decimal: number;
-    let text: string;
-
-    const isIntValue = isInt(Number(this.value));
-    if (isIntValue) {
-      increaseValue = Math.floor(increaseValue);
-      if (!(increaseValue % 5)) {
-        increaseValue -= 1;
-      }
-      console.log(increaseValue)
-    } else {
-      decimal = this.value.split('.')[1].length;
-      console.log(decimal)
-
-      increaseValue = Number(increaseValue.toFixed(decimal));
-
-
-      if (!(increaseValue * Math.pow(10,decimal) % 5)) {
-        increaseValue -= 1 / Math.pow(10,decimal);
-      }
-
-      console.log(increaseValue)
-    }
-    this.textValue += increaseValue;
-
-    if (this.isEnd) {
-      this.textValue = Number(this.value);
-      text = this.value;
-    } else if (!isIntValue) {
-      text = this.textValue.toFixed(decimal)
-    } else {
-      text = String(this.textValue);
-    }
+    const text = this.computedText();
 
     ctx.fillStyle = '#000000';
     ctx.font = '40px';

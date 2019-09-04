@@ -15,6 +15,7 @@ interface options {
   el: string | HTMLElement,
   animation?: boolean | number,
   animationEnd?: (any) => void,
+  observer?: (progress?: number, text?: string) => void;
 }
 
 interface updateOptions {
@@ -43,12 +44,14 @@ class ArcProgress {
   private type: string = 'increase';
   private isEnd: boolean = false;
   private thickness: number;
-  private animationEnd: (any) => void;
+  private animationEnd: (e: any) => void;
+  private observer: (progress?: number, text?: string) => void;
   private emptyColor: string = '#efefef';
   private fillColor: string = '#6bd5c8';
   private lineCap: string = 'round';
+  private currentText: string;
 
-  constructor({width, height, el, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, animationEnd = () => {}}: options) {
+  constructor({width, height, el, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, animationEnd = () => {}, observer}: options) {
     this.width = width || 200;
     this.height = height || 200;
     this.arcStart = arcStart
@@ -62,6 +65,7 @@ class ArcProgress {
     this.fillColor = fillColor || this.fillColor;
     this.lineCap = lineCap || this.lineCap;
     this.animation = animation || true;
+    this.observer = observer;
     this.setSpeed(speed);
 
     this.init();
@@ -81,6 +85,7 @@ class ArcProgress {
   private drawBackground() {
     const ctx = this.ctx;
     const PI = Math.PI;
+    const size = this.width / 2;
     const conversionRate = 180; //  360/2
     const start = this.arcStart / conversionRate * PI;
     const end = this.arcEnd / conversionRate * PI;
@@ -90,7 +95,7 @@ class ArcProgress {
     ctx.lineCap = this.lineCap;
     ctx.strokeStyle = this.emptyColor;
 
-    ctx.arc(100, 100, 100 - this.thickness, start, end, false);
+    ctx.arc(size, size, size - this.thickness, start, end, false);
     ctx.stroke();
     ctx.closePath();
   }
@@ -136,8 +141,8 @@ class ArcProgress {
       decimal = this.value.split('.')[1].length;
       increaseValue = Number(increaseValue.toFixed(decimal));
 
-      if (!(increaseValue * Math.pow(10,decimal) % 5)) {
-        increaseValue -= 1 / Math.pow(10,decimal);
+      if (!(increaseValue * Math.pow(10, decimal) % 5)) {
+        increaseValue -= 1 / Math.pow(10, decimal);
       }
     }
 
@@ -156,9 +161,10 @@ class ArcProgress {
     }
   }
 
-  private drawPregress() {
+  private drawProgress() {
     const ctx = this.ctx;
 
+    const size = this.width / 2;
     const {start, end} = this.computedArc();
 
     ctx.beginPath();
@@ -166,7 +172,7 @@ class ArcProgress {
     ctx.lineCap = this.lineCap;
     ctx.strokeStyle = this.fillColor;
 
-    ctx.arc(100, 100, 100 - this.thickness, start, end, false);
+    ctx.arc(size, size, size - this.thickness, start, end, false);
 
     ctx.stroke();
     ctx.closePath();
@@ -178,10 +184,12 @@ class ArcProgress {
   private drawText() {
     const ctx = this.ctx;
     const text = this.computedText();
+    this.currentText = text;
 
     ctx.fillStyle = '#000000';
     ctx.font = '40px';
-    ctx.fillText(text, 60, 75);
+    ctx.textAlign = 'center';
+    ctx.fillText(text, this.width/2, 75);
   }
 
   private requestAnimationFrame(cb) {
@@ -189,6 +197,9 @@ class ArcProgress {
   }
 
   private accumulation() {
+    if (this.animation && typeof this.animation === 'number') {
+      this.speed = this.progress / (this.animation / (1000/60));
+    }
     if (this.type === 'increase') {
       this.percentage += this.speed;
       if (this.percentage > this.progress)
@@ -209,7 +220,9 @@ class ArcProgress {
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.drawBackground();
     this.drawText();
-    this.drawPregress();
+    this.drawProgress();
+
+    this.observer && this.observer(this.percentage, this.currentText);
 
     if (this.type === 'increase' && this.percentage < this.progress) {
       this.accumulation();

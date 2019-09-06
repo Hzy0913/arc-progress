@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "webpack-dev-server --config build/dev.js",
-    "build": "rimraf lib && webpack --config build/prd.js && npm run movedts && rimraf lib/src",
-    "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts",
+    "build": "rimraf lib && webpack --config build/prd.js && npm run movedts && npm run min",
+    "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts && rimraf lib/src",
     "min": "rimraf dist && mkdir dist && cp lib/index.js dist/arc-progress.min.js"
   },
   "keywords": [

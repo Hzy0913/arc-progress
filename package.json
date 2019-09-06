@@ -2,11 +2,12 @@
   "name": "arc-progress",
   "version": "0.0.1-beta",
   "description": "arc-progress circular-progress progress",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "start": "webpack-dev-server --config build/dev.js",
     "build": "rimraf lib && webpack --config build/prd.js && npm run movedts && rimraf lib/src",
-    "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts"
+    "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts",
+    "min": "rimraf dist && mkdir dist && cp lib/index.js dist/arc-progress.min.js"
   },
   "keywords": [
     "arc-progress",

@@ -37,6 +37,7 @@ interface updateOptions {
   el?: string | HTMLElement,
 }
 
+let lastNumber: number = 0;
 class ArcProgress {
   public size: number;
   public el: string | HTMLElement;
@@ -85,7 +86,6 @@ class ArcProgress {
 
   private init(): void {
     const el = typeof this.el === 'string' ? <HTMLElement>document.querySelector(this.el) : <HTMLElement>this.el;
-    console.log(el)
     const canvas = document.createElement('canvas');
     this.canvas = canvas;
 
@@ -151,18 +151,19 @@ class ArcProgress {
     const frequency = this.progress / this.speed;
     let increaseValue = Number(this.value) / frequency;
     let decimal: number;
+    console.log(increaseValue, 4444444)
 
     const isIntValue = isInt(this.value);
     if (isIntValue) {
       increaseValue = Math.floor(increaseValue);
-      if (!(increaseValue % 5)) {
+      if (!(increaseValue % 2)) {
         increaseValue -= 1;
       }
     } else {
       decimal = this.value.split('.')[1].length;
       increaseValue = Number(increaseValue.toFixed(decimal));
 
-      if (!(increaseValue * Math.pow(10, decimal) % 5)) {
+      if (!(increaseValue * Math.pow(10, decimal) % 2)) {
         increaseValue -= 1 / Math.pow(10, decimal);
       }
     }
@@ -176,7 +177,8 @@ class ArcProgress {
     if (this.isEnd) {
       return this.value;
     } else if (!isIntValue) {
-      return this.textValue.toFixed(decimal)
+      lastNumber = lastNumber === 10 ? 0 : lastNumber += 1;
+      return this.textValue.toFixed(decimal - 1) + lastNumber;
     } else {
       return String(this.textValue);
     }

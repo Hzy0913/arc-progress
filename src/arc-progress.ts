@@ -29,7 +29,7 @@ interface updateOptions {
 class ArcProgress {
   public size: number;
   public el: string | HTMLElement;
-  public canvas: HTMLElement;
+  public canvas: HTMLCanvasElement;
   public ctx: any;
   public arcStart: number;
   public arcEnd: number;
@@ -50,13 +50,13 @@ class ArcProgress {
   private currentText: string;
 
   constructor({size, el, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, animationEnd = () => {}, observer}: options) {
-    this.size = size || 200;
-    this.arcStart = arcStart
-    this.arcEnd = arcEnd
+    this.size = (size || 200) * 2; // HD mode
+    this.arcStart = arcStart;
+    this.arcEnd = arcEnd;
     this.progress = progress * 100;
     this.value = value;
     this.el = el;
-    this.thickness = thickness || 12;
+    this.thickness = (thickness || 12) * 2;
     this.animationEnd = animationEnd;
     this.emptyColor = emptyColor || this.emptyColor;
     this.fillColor = fillColor || this.fillColor;
@@ -69,11 +69,19 @@ class ArcProgress {
   }
 
   private init(): void {
-    const el = typeof this.el === 'string' ? document.querySelector(this.el) : this.el;
+    const el = typeof this.el === 'string' ? <HTMLElement>document.querySelector(this.el) : <HTMLElement>this.el;
+    console.log(el)
     const canvas = document.createElement('canvas');
     this.canvas = canvas;
+
+    const originalSize = this.size / 2;
+    el.style.width = `${originalSize}px`;
+    el.style.height = `${originalSize}px`;
     canvas.width = this.size;
     canvas.height = this.size;
+    canvas.style.width = `${originalSize}px`;
+    canvas.style.height = `${originalSize}px`;
+    canvas.style.width = 'block';
     el.appendChild(canvas);
     this.ctx = canvas.getContext('2d');
 
@@ -184,10 +192,17 @@ class ArcProgress {
     const text = this.computedText();
     this.currentText = text;
 
+    ctx.font = '14px ""';
     ctx.fillStyle = '#000000';
-    ctx.font = '40px';
     ctx.textAlign = 'center';
-    ctx.fillText(text, this.size/2, 75);
+    ctx.textBaseline = "middle";
+
+    ctx.fillText(text, this.size/2, this.size/2);
+
+    ctx.font = '24px ""';
+    ctx.fillStyle = 'red';
+    ctx.fillText('aaaa', this.size/2, 90/2);
+
   }
 
   private requestAnimationFrame(cb) {

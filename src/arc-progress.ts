@@ -32,6 +32,7 @@ class ArcProgress {
   public width: number;
   public height: number;
   public el: string | HTMLElement;
+  public canvas: HTMLElement;
   public ctx: any;
   public arcStart: number;
   public arcEnd: number;
@@ -74,6 +75,7 @@ class ArcProgress {
   private init() {
     const el = typeof this.el === 'string' ? document.querySelector(this.el) : this.el;
     const canvas = document.createElement('canvas');
+    this.canvas = canvas;
     canvas.width = this.width;
     canvas.height = this.height;
     el.appendChild(canvas);
@@ -240,6 +242,14 @@ class ArcProgress {
     this.progress = progress * 100;
     this.value = value;
     this.drawProgressAnimate();
+  }
+
+  public destroy(): void {
+    const container = this.canvas.parentNode;
+
+    if (container) {
+      container.removeChild(this.canvas);
+    }
   }
 
 }

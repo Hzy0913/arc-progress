@@ -182,9 +182,25 @@ class ArcProgress {
     }
   }
 
+  private setFillColor(ctx: CanvasRenderingContext2D): void {
+    const gradientColors = this.fillColor.split(' ');
+    if (gradientColors.length > 1) {
+      const grad = ctx.createLinearGradient(0, 0, this.size, 0);
+      const length = gradientColors.length;
+      const part = 1/length;
+      let partCount = 0;
+      for (let i = 0; i < length; i++) {
+        grad.addColorStop(partCount, '#A9D25B');
+        partCount += part;
+      }
+      ctx.strokeStyle = grad;
+    } else {
+      ctx.strokeStyle = this.fillColor;
+    }
+  }
+
   private drawProgress(): void {
     const ctx = this.ctx;
-
     const halfSize = this.size / 2;
     const {start, end} = this.computedArc();
 
@@ -192,18 +208,12 @@ class ArcProgress {
     ctx.lineWidth = this.thickness;
     ctx.lineCap = this.lineCap;
 
-
-    var g = ctx.createLinearGradient(0,0,this.size,0);  //创建渐变对象  渐变开始点和渐变结束点
-    g.addColorStop(1, '#A9D25B'); //添加颜色点
-    g.addColorStop(0, '#FA5A2D'); //添加颜色点
-
-
-    ctx.strokeStyle = g;
-
+    this.setFillColor(ctx);
     ctx.arc(halfSize, halfSize, halfSize - this.thickness, start, end, false);
 
     ctx.stroke();
     ctx.closePath();
+
     if (this.isEnd) {
       this.animationEnd(this);
     }

@@ -1,5 +1,14 @@
 import {isInt} from './utils';
 
+interface textStyle {
+  text?: string,
+  size?: string,
+  color?: string,
+  x?: number,
+  y?: number,
+  length?: number,
+}
+
 interface options {
   size?: number,
   arcStart?: number,
@@ -10,6 +19,8 @@ interface options {
   emptyColor?: string,
   fillColor?: string,
   lineCap?: string,
+  textStyle?: textStyle,
+  customText?: textStyle[],
   speed?: number,
   el: string | HTMLElement,
   animation?: boolean | number,
@@ -36,6 +47,8 @@ class ArcProgress {
   public progress: number;
   public value: string;
   public animation: boolean | number;
+  public textStyle: textStyle;
+  public customText: textStyle[];
   private percentage: number = 0;
   private speed: number = 1;
   private textValue: number = 0;
@@ -49,7 +62,7 @@ class ArcProgress {
   private lineCap: string = 'round';
   private currentText: string;
 
-  constructor({size, el, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, animationEnd = () => {}, observer}: options) {
+  constructor({size, el, textStyle, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: options) {
     this.size = (size || 200) * 2; // HD mode
     this.arcStart = arcStart;
     this.arcEnd = arcEnd;
@@ -62,6 +75,8 @@ class ArcProgress {
     this.fillColor = fillColor || this.fillColor;
     this.lineCap = lineCap || this.lineCap;
     this.animation = animation || true;
+    this.textStyle = textStyle || {size: '18px', color: '#000', x: this.size/4, y: this.size/4};
+    this.customText = customText || [];
     this.observer = observer;
     this.setSpeed(speed);
 
@@ -176,7 +191,14 @@ class ArcProgress {
     ctx.beginPath();
     ctx.lineWidth = this.thickness;
     ctx.lineCap = this.lineCap;
-    ctx.strokeStyle = this.fillColor;
+
+
+    var g = ctx.createLinearGradient(0,0,this.size,0);  //创建渐变对象  渐变开始点和渐变结束点
+    g.addColorStop(1, '#A9D25B'); //添加颜色点
+    g.addColorStop(0, '#FA5A2D'); //添加颜色点
+
+
+    ctx.strokeStyle = g;
 
     ctx.arc(halfSize, halfSize, halfSize - this.thickness, start, end, false);
 
@@ -187,22 +209,31 @@ class ArcProgress {
     }
   }
 
+  private setText(ctx: CanvasRenderingContext2D, fontSetting: textStyle): void {
+    const {text, size = '14px', color = '#000', x = 10, y = 10} = fontSetting;
+    console.log(fontSetting)
+    const fontSize = parseInt(size) * 2;
+    const unit = size.substring(String(fontSize).length) || 'px';
+
+    ctx.font = `${fontSize}${unit} sans-seri`;
+
+    console.log(color)
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x * 2, y * 2);
+
+  }
+
   private drawText(): void {
     const ctx = this.ctx;
     const text = this.computedText();
     this.currentText = text;
 
-    ctx.font = '14px ""';
-    ctx.fillStyle = '#000000';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = "middle";
-
-    ctx.fillText(text, this.size/2, this.size/2);
-
-    ctx.font = '24px ""';
-    ctx.fillStyle = 'red';
-    ctx.fillText('aaaa', this.size/2, 90/2);
-
+    const textContent =  <textStyle>[{text, ...this.textStyle}, ...this.customText];
+    for (let i = 0; i < textContent.length; i++) {
+      this.setText(ctx, textContent[i]);
+    }
   }
 
   private requestAnimationFrame(cb) {

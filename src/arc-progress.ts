@@ -151,7 +151,6 @@ class ArcProgress {
     const frequency = this.progress / this.speed;
     let increaseValue = Number(this.value) / frequency;
     let decimal: number;
-    console.log(increaseValue, 4444444)
 
     const isIntValue = isInt(this.value);
     if (isIntValue) {
@@ -223,13 +222,11 @@ class ArcProgress {
 
   private setText(ctx: CanvasRenderingContext2D, fontSetting: textStyle): void {
     const {text, size = '14px', color = '#000', x = 10, y = 10} = fontSetting;
-    console.log(fontSetting)
     const fontSize = parseInt(size) * 2;
     const unit = size.substring(String(fontSize).length) || 'px';
 
     ctx.font = `${fontSize}${unit} sans-seri`;
 
-    console.log(color)
     ctx.fillStyle = color;
     ctx.textAlign = 'center';
     ctx.textBaseline = "middle";

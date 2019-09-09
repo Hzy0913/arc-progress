@@ -63,7 +63,7 @@ class ArcProgress {
   private lineCap: string = 'round';
   private currentText: string;
 
-  constructor({size, el, textStyle, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: options) {
+  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: options) {
     this.size = (size || 200) * 2; // HD mode
     this.arcStart = arcStart;
     this.arcEnd = arcEnd;
@@ -76,7 +76,7 @@ class ArcProgress {
     this.fillColor = fillColor || this.fillColor;
     this.lineCap = lineCap || this.lineCap;
     this.animation = animation || true;
-    this.textStyle = textStyle || {size: '18px', color: '#000', x: this.size/4, y: this.size/4};
+    this.textStyle = {size: '18px', color: '#000', x: this.size/4, y: this.size/4, ...textStyle};
     this.customText = customText || [];
     this.observer = observer;
     this.setSpeed(speed);

@@ -14,7 +14,7 @@ interface options {
   arcStart?: number,
   arcEnd?: number,
   progress: number,
-  value?: string,
+  text?: string,
   thickness?: number,
   emptyColor?: string,
   fillColor?: string,
@@ -22,19 +22,13 @@ interface options {
   textStyle?: textStyle,
   customText?: textStyle[],
   speed?: number,
-  el: string | HTMLElement,
   animation?: boolean | number,
   animationEnd?: (any) => void,
   observer?: (progress?: number, text?: string) => void;
 }
 
-interface updateOptions {
-  size?: number,
-  arcStart?: number,
-  arcEnd?: number,
-  progress: number,
-  value?: string,
-  el?: string | HTMLElement,
+interface constructorOptions extends options {
+  el: string | HTMLElement
 }
 
 let lastNumber: number = 0;
@@ -46,7 +40,7 @@ class ArcProgress {
   public arcStart: number;
   public arcEnd: number;
   public progress: number;
-  public value: string;
+  public text: string;
   public animation: boolean | number;
   public textStyle: textStyle;
   public customText: textStyle[];
@@ -63,12 +57,12 @@ class ArcProgress {
   private lineCap: string = 'round';
   private currentText: string;
 
-  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, value, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: options) {
+  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: constructorOptions) {
     this.size = (size || 200) * 2; // HD mode
     this.arcStart = arcStart;
     this.arcEnd = arcEnd;
     this.progress = progress * 100;
-    this.value = value;
+    this.text = text;
     this.el = el;
     this.thickness = (thickness || 12) * 2;
     this.animationEnd = animationEnd;
@@ -149,17 +143,17 @@ class ArcProgress {
 
   private computedText(): string {
     const frequency = this.progress / this.speed;
-    let increaseValue = Number(this.value) / frequency;
+    let increaseValue = Number(this.text) / frequency;
     let decimal: number;
 
-    const isIntValue = isInt(this.value);
+    const isIntValue = isInt(this.text);
     if (isIntValue) {
       increaseValue = Math.floor(increaseValue);
       if (!(increaseValue % 2)) {
         increaseValue -= 1;
       }
     } else {
-      decimal = this.value.split('.')[1].length;
+      decimal = this.text.split('.')[1].length;
       increaseValue = Number(increaseValue.toFixed(decimal));
 
       if (!(increaseValue * Math.pow(10, decimal) % 2)) {
@@ -174,7 +168,7 @@ class ArcProgress {
     }
 
     if (this.isEnd) {
-      return this.value;
+      return this.text;
     } else if (!isIntValue) {
       lastNumber = lastNumber === 10 ? 0 : lastNumber += 1;
       return this.textValue.toFixed(decimal - 1) + lastNumber;
@@ -256,11 +250,11 @@ class ArcProgress {
     if (this.type === 'increase') {
       this.percentage += this.speed;
       if (this.percentage > this.progress)
-        this.percentage = this.progress
+        this.percentage = this.progress;
     } else {
       this.percentage -= this.speed;
       if (this.percentage < this.progress)
-        this.percentage = this.progress
+        this.percentage = this.progress;
     }
   }
 
@@ -286,12 +280,14 @@ class ArcProgress {
     }
   }
 
-  public updateProgress({progress, value}: updateOptions): void {
+  public updateProgress(updateOption: options): void {
     if (!this.isEnd) return;
+    const {progress, ...restOption} = updateOption;
     this.type = progress * 100 > this.progress ? 'increase' : 'reduce';
-
     this.progress = progress * 100;
-    this.value = value;
+
+    Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
+
     this.drawProgressAnimate();
   }
 

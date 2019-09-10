@@ -73,7 +73,7 @@ class ArcProgress {
     this.textStyle = {size: '18px', color: '#000', x: this.size/4, y: this.size/4, ...textStyle};
     this.customText = customText || [];
     this.observer = observer;
-    this.setSpeed(speed);
+    this.setSpeed();
 
     this.init();
   }
@@ -131,8 +131,11 @@ class ArcProgress {
     return {start: startPI, end: endPI};
   }
 
-  private setSpeed(speed: number): void {
-    if (speed) {
+  private setSpeed(): void {
+    const {speed, animation, progress} = this;
+    if (animation && typeof animation === 'number') {
+      this.speed = progress / (animation / (1000/60));
+    } else if (speed) {
       if (speed > 0) {
         this.speed += speed / 40;
       } else {
@@ -185,7 +188,7 @@ class ArcProgress {
       const part = 1/length;
       let partCount = 0;
       for (let i = 0; i < length; i++) {
-        grad.addColorStop(partCount, '#A9D25B');
+        grad.addColorStop(partCount, gradientColors[i]);
         partCount += part;
       }
       ctx.strokeStyle = grad;
@@ -244,9 +247,7 @@ class ArcProgress {
   }
 
   private accumulation(): void {
-    if (this.animation && typeof this.animation === 'number') {
-      this.speed = this.progress / (this.animation / (1000/60));
-    }
+
     if (this.type === 'increase') {
       this.percentage += this.speed;
       if (this.percentage > this.progress)
@@ -274,7 +275,7 @@ class ArcProgress {
     if (this.type === 'increase' && this.percentage < this.progress) {
       this.accumulation();
       this.requestAnimationFrame(this.drawProgressAnimate);
-    } else if (this.type === 'reduce' && this.percentage > this.progress) {
+    } else if (this.type === 'decrease' && this.percentage > this.progress) {
       this.accumulation();
       this.requestAnimationFrame(this.drawProgressAnimate);
     }
@@ -283,11 +284,12 @@ class ArcProgress {
   public updateProgress(updateOption: options): void {
     if (!this.isEnd) return;
     const {progress, ...restOption} = updateOption;
-    this.type = progress * 100 > this.progress ? 'increase' : 'reduce';
+    this.type = progress * 100 > this.progress ? 'increase' : 'decrease';
     this.progress = progress * 100;
 
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
 
+    this.setSpeed();
     this.drawProgressAnimate();
   }
 

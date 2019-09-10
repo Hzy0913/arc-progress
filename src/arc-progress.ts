@@ -31,7 +31,9 @@ interface constructorOptions extends options {
   el: string | HTMLElement
 }
 
+const PI = Math.PI;
 let lastNumber: number = 0;
+
 class ArcProgress {
   public size: number;
   public el: string | HTMLElement;
@@ -56,6 +58,8 @@ class ArcProgress {
   private fillColor: string = '#6bd5c8';
   private lineCap: string = 'round';
   private currentText: string;
+  private increaseValue: number = 0;
+  private frequency: number = 0;
 
   constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: constructorOptions) {
     this.size = (size || 200) * 2; // HD mode
@@ -73,12 +77,20 @@ class ArcProgress {
     this.textStyle = {size: '18px', color: '#000', x: this.size/4, y: this.size/4, ...textStyle};
     this.customText = customText || [];
     this.observer = observer;
-    this.setSpeed();
 
     this.init();
   }
 
-  private init(): void {
+  private init(notCreate?: boolean): void {
+    this.createCanvas(notCreate);
+    this.setSpeed();
+    this.setIncreaseValue();
+    this.drawProgressAnimate();
+  }
+
+  private createCanvas(notCreate?: boolean): void {
+    if (notCreate) return;
+
     const el = typeof this.el === 'string' ? <HTMLElement>document.querySelector(this.el) : <HTMLElement>this.el;
     const canvas = document.createElement('canvas');
     this.canvas = canvas;
@@ -93,13 +105,10 @@ class ArcProgress {
     canvas.style.width = 'block';
     el.appendChild(canvas);
     this.ctx = canvas.getContext('2d');
-
-    this.drawProgressAnimate();
   }
 
   private drawBackground(): void {
     const ctx = this.ctx;
-    const PI = Math.PI;
     const size = this.size / 2;
     const conversionRate = 180; //  360/2
     const start = this.arcStart / conversionRate * PI;
@@ -116,7 +125,6 @@ class ArcProgress {
   }
 
   private computedArc(): {start: number, end: number} {
-    const PI = Math.PI;
     const conversionRate = 180; //  360/2
 
     const start = this.arcStart / conversionRate;
@@ -142,41 +150,43 @@ class ArcProgress {
         this.speed += speed / 101;
       }
     }
+
+    this.frequency = this.progress / this.speed;
+  }
+
+  private setIncreaseValue(): void {
+    const {frequency} = this;
+    const numberText = Number(this.text);
+    let increaseValue = numberText / frequency;
+    const isIntValue = isInt(this.text);
+
+    if (isIntValue && !(Math.floor(increaseValue) % 2) && numberText > frequency) {
+      increaseValue = increaseValue - 1 > 0 ? increaseValue -= 1 : 1;
+    }
+    this.increaseValue = increaseValue;
   }
 
   private computedText(): string {
-    const frequency = this.progress / this.speed;
-    let increaseValue = Number(this.text) / frequency;
-    let decimal: number;
+    let decimal = this.text.split('.')[1].length;
 
     const isIntValue = isInt(this.text);
-    if (isIntValue) {
-      increaseValue = Math.floor(increaseValue);
-      if (!(increaseValue % 2)) {
-        increaseValue -= 1;
-      }
-    } else {
-      decimal = this.text.split('.')[1].length;
-      increaseValue = Number(increaseValue.toFixed(decimal));
-
-      if (!(increaseValue * Math.pow(10, decimal) % 2)) {
-        increaseValue -= 1 / Math.pow(10, decimal);
-      }
-    }
 
     if (this.type === 'increase') {
-      this.textValue += increaseValue;
+      this.textValue += this.increaseValue;
     } else {
-      this.textValue -= increaseValue;
+      this.textValue -= this.increaseValue;
     }
 
     if (this.isEnd) {
       return this.text;
     } else if (!isIntValue) {
-      lastNumber = lastNumber === 10 ? 0 : lastNumber += 1;
-      return this.textValue.toFixed(decimal - 1) + lastNumber;
+      lastNumber = lastNumber === 9 ? 0 : lastNumber += 1;
+      if (decimal > 1) {
+        return this.textValue.toFixed(decimal - 1) + lastNumber;
+      }
+      return this.textValue.toFixed(0) + `.${lastNumber}`;
     } else {
-      return String(this.textValue);
+      return String(Math.floor(this.textValue));
     }
   }
 
@@ -223,12 +233,10 @@ class ArcProgress {
     const unit = size.substring(String(fontSize).length) || 'px';
 
     ctx.font = `${fontSize}${unit} sans-seri`;
-
     ctx.fillStyle = color;
     ctx.textAlign = 'center';
-    ctx.textBaseline = "middle";
-    ctx.fillText(text, x * 2, y * 2);
-
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x * 2 - 110, y * 2);
   }
 
   private drawText(): void {
@@ -247,7 +255,6 @@ class ArcProgress {
   }
 
   private accumulation(): void {
-
     if (this.type === 'increase') {
       this.percentage += this.speed;
       if (this.percentage > this.progress)
@@ -289,8 +296,7 @@ class ArcProgress {
 
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
 
-    this.setSpeed();
-    this.drawProgressAnimate();
+    this.init(true)
   }
 
   public destroy(): void {

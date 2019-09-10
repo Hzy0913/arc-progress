@@ -9,7 +9,10 @@ interface textStyle {
   length?: number,
 }
 
-interface options {
+type lineCap = 'butt' | 'round' | 'square'
+
+interface Options {
+  el: string | HTMLElement
   size?: number,
   arcStart?: number,
   arcEnd?: number,
@@ -18,7 +21,7 @@ interface options {
   thickness?: number,
   emptyColor?: string,
   fillColor?: string,
-  lineCap?: string,
+  lineCap?: lineCap,
   textStyle?: textStyle,
   customText?: textStyle[],
   speed?: number,
@@ -27,9 +30,6 @@ interface options {
   observer?: (progress?: number, text?: string) => void;
 }
 
-interface constructorOptions extends options {
-  el: string | HTMLElement
-}
 
 const PI = Math.PI;
 let lastNumber: number = 0;
@@ -56,12 +56,12 @@ class ArcProgress {
   private observer: (progress?: number, text?: string) => void;
   private emptyColor: string = '#efefef';
   private fillColor: string = '#6bd5c8';
-  private lineCap: string = 'round';
+  private lineCap: lineCap = 'round';
   private currentText: string;
   private increaseValue: number = 0;
   private frequency: number = 0;
 
-  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: constructorOptions) {
+  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: Options) {
     this.size = (size || 200) * 2; // HD mode
     this.arcStart = arcStart;
     this.arcEnd = arcEnd;
@@ -89,22 +89,25 @@ class ArcProgress {
   }
 
   private createCanvas(notCreate?: boolean): void {
-    if (notCreate) return;
-
     const el = typeof this.el === 'string' ? <HTMLElement>document.querySelector(this.el) : <HTMLElement>this.el;
-    const canvas = document.createElement('canvas');
-    this.canvas = canvas;
+
+    if (!notCreate) {
+      this.canvas = document.createElement('canvas');
+    }
 
     const originalSize = this.size / 2;
     el.style.width = `${originalSize}px`;
     el.style.height = `${originalSize}px`;
-    canvas.width = this.size;
-    canvas.height = this.size;
-    canvas.style.width = `${originalSize}px`;
-    canvas.style.height = `${originalSize}px`;
-    canvas.style.width = 'block';
-    el.appendChild(canvas);
-    this.ctx = canvas.getContext('2d');
+    this.canvas.width = this.size;
+    this.canvas.height = this.size;
+    this.canvas.style.width = `${originalSize}px`;
+    this.canvas.style.height = `${originalSize}px`;
+    this.canvas.style.width = 'block';
+
+    if (!notCreate) {
+      el.appendChild(this.canvas);
+      this.ctx = this.canvas.getContext('2d');
+    }
   }
 
   private drawBackground(): void {
@@ -236,7 +239,7 @@ class ArcProgress {
     ctx.fillStyle = color;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, x * 2 - 110, y * 2);
+    ctx.fillText(text, x * 2, y * 2);
   }
 
   private drawText(): void {
@@ -288,12 +291,26 @@ class ArcProgress {
     }
   }
 
-  public updateProgress(updateOption: options): void {
-    if (!this.isEnd) return;
-    const {progress, ...restOption} = updateOption;
-    this.type = progress * 100 > this.progress ? 'increase' : 'decrease';
-    this.progress = progress * 100;
+  private resetOptions = (option: any): void => {
+    const {progress, thickness, textStyle, size} = option || {};
+    if (typeof progress === 'number') {
+      const setProgress = progress * 100;
+      this.type = setProgress > this.progress ? 'increase' : 'decrease';
+      this.progress = setProgress;
+    }
+    if (thickness)
+      this.thickness = thickness * 2;
+    if (textStyle)
+      this.textStyle = {...this.textStyle, ...textStyle};
+    if (size)
+      this.size = size * 2; // HD mode
+  }
 
+  public updateProgress(updateOption: Omit<Options, 'el'>): void {
+    if (!this.isEnd) return;
+    const {progress, thickness, textStyle, size, ...restOption} = updateOption;
+
+    this.resetOptions({progress, thickness, textStyle, size});
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
 
     this.init(true)

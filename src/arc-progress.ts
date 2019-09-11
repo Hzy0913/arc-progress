@@ -9,7 +9,7 @@ interface textStyle {
   length?: number,
 }
 
-type lineCap = 'butt' | 'round' | 'square'
+type lineCap = 'butt' | 'round' | 'square';
 
 interface Options {
   el: string | HTMLElement
@@ -30,9 +30,10 @@ interface Options {
   observer?: (progress?: number, text?: string) => void;
 }
 
-
 const PI = Math.PI;
 let lastNumber: number = 0;
+let prevProgress: number = 0;
+let prevText: string = '0';
 
 class ArcProgress {
   public size: number;
@@ -73,7 +74,7 @@ class ArcProgress {
     this.emptyColor = emptyColor || this.emptyColor;
     this.fillColor = fillColor || this.fillColor;
     this.lineCap = lineCap || this.lineCap;
-    this.animation = animation || true;
+    this.animation = animation;
     this.textStyle = {size: '18px', color: '#000', x: this.size/4, y: this.size/4, ...textStyle};
     this.customText = customText || [];
     this.observer = observer;
@@ -144,8 +145,11 @@ class ArcProgress {
 
   private setSpeed(): void {
     const {speed, animation, progress} = this;
+    const dProgress = progress > prevProgress ? progress - prevProgress : prevProgress - progress;
+
     if (animation && typeof animation === 'number') {
-      this.speed = progress / (animation / (1000/60));
+      console.log(progress, prevProgress, 111)
+      this.speed = dProgress / (animation / (1000/60));
     } else if (speed) {
       if (speed > 0) {
         this.speed += speed / 40;
@@ -154,13 +158,16 @@ class ArcProgress {
       }
     }
 
-    this.frequency = this.progress / this.speed;
+    this.frequency = dProgress / this.speed;
   }
 
   private setIncreaseValue(): void {
     const {frequency} = this;
     const numberText = Number(this.text);
-    let increaseValue = numberText / frequency;
+    const prevNumberText = Number(prevText);
+    const dText = numberText > prevNumberText ? numberText - prevNumberText : prevNumberText - numberText;
+    console.log(dText, 77666666)
+    let increaseValue = dText / frequency;
     const isIntValue = isInt(this.text);
 
     if (isIntValue && !(Math.floor(increaseValue) % 2) && numberText > frequency) {
@@ -244,10 +251,16 @@ class ArcProgress {
 
   private drawText(): void {
     const ctx = this.ctx;
-    const text = this.computedText();
+    const text = (this.text && this.computedText());
     this.currentText = text;
 
-    const textContent =  <textStyle>[{text, ...this.textStyle}, ...this.customText];
+
+    let textContent = [];
+
+    if (text) {
+      textContent.push({text, ...this.textStyle});
+    }
+    textContent = [...textContent, ...this.customText];
     for (let i = 0; i < textContent.length; i++) {
       this.setText(ctx, textContent[i]);
     }
@@ -308,8 +321,10 @@ class ArcProgress {
 
   public updateProgress(updateOption: Omit<Options, 'el'>): void {
     if (!this.isEnd) return;
-    const {progress, thickness, textStyle, size, ...restOption} = updateOption;
+    prevProgress = this.progress;
+    prevText = this.text;
 
+    const {progress, thickness, textStyle, size, ...restOption} = updateOption;
     this.resetOptions({progress, thickness, textStyle, size});
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
 

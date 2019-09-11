@@ -85,7 +85,7 @@ class ArcProgress {
   private init(notCreate?: boolean): void {
     this.createCanvas(notCreate);
     this.setSpeed();
-    this.setIncreaseValue();
+    this.text && this.setIncreaseValue();
     this.drawProgressAnimate();
   }
 
@@ -148,7 +148,6 @@ class ArcProgress {
     const dProgress = progress > prevProgress ? progress - prevProgress : prevProgress - progress;
 
     if (animation && typeof animation === 'number') {
-      console.log(progress, prevProgress, 111)
       this.speed = dProgress / (animation / (1000/60));
     } else if (speed) {
       if (speed > 0) {
@@ -166,7 +165,6 @@ class ArcProgress {
     const numberText = Number(this.text);
     const prevNumberText = Number(prevText);
     const dText = numberText > prevNumberText ? numberText - prevNumberText : prevNumberText - numberText;
-    console.log(dText, 77666666)
     let increaseValue = dText / frequency;
     const isIntValue = isInt(this.text);
 
@@ -253,8 +251,6 @@ class ArcProgress {
     const ctx = this.ctx;
     const text = (this.text && this.computedText());
     this.currentText = text;
-
-
     let textContent = [];
 
     if (text) {
@@ -328,7 +324,7 @@ class ArcProgress {
     this.resetOptions({progress, thickness, textStyle, size});
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
 
-    this.init(true)
+    this.init(true);
   }
 
   public destroy(): void {
@@ -338,7 +334,6 @@ class ArcProgress {
       container.removeChild(this.canvas);
     }
   }
-
 }
 
 export default ArcProgress;

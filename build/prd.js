@@ -1,7 +1,7 @@
 const path = require('path');
 
 const NODE_ENV = process.env.NODE_ENV;
-const prdWebpackConfig= {
+const prdWebpackConfig = {
   mode: 'production',
   entry: path.resolve(__dirname, '../src/arc-progress.ts'),
   output: {
@@ -12,7 +12,7 @@ const prdWebpackConfig= {
     libraryTarget: 'umd'
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: ['.tsx', '.ts', '.js'],
   },
   module: {
     rules: [

@@ -3,9 +3,8 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const Chalk = require('chalk');
-const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 
-console.log(path.resolve(__dirname, '../example/draw.ts'))
 const port = 8989;
 const host = '0.0.0.0';
 module.exports = {
@@ -13,10 +12,10 @@ module.exports = {
   entry: path.resolve(__dirname, '../example/draw.ts'),
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: "main.js",
+    filename: 'main.js',
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: ['.tsx', '.ts', '.js'],
   },
   module: {
     rules: [
@@ -62,7 +61,7 @@ module.exports = {
     host,
     inline: true,
     hot: true,
-    // open: true,
+    open: true,
     stats: 'errors-only',
     quiet: true
   },

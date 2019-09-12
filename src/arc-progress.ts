@@ -50,6 +50,7 @@ class ArcProgress {
   public customText: textStyle[];
   private percentage: number = 0;
   private speed: number = 1;
+  private speedOption: number = 0;
   private type: string = 'increase';
   private isEnd: boolean = false;
   private thickness: number;
@@ -78,6 +79,7 @@ class ArcProgress {
     this.textStyle = {size: '18px', color: '#000', x: this.size/4, y: this.size/4, ...textStyle};
     this.customText = customText || [];
     this.observer = observer;
+    this.speedOption = speed;
 
     this.init();
   }
@@ -144,16 +146,17 @@ class ArcProgress {
   }
 
   private setSpeed(): void {
-    const {speed, animation, progress} = this;
+    const {speedOption, animation, progress} = this;
     const dProgress = progress > prevProgress ? progress - prevProgress : prevProgress - progress;
 
     if (animation && typeof animation === 'number') {
       this.speed = dProgress / (animation / (1000/60));
-    } else if (speed) {
-      if (speed > 0) {
-        this.speed += speed / 40;
+    } else if (typeof speedOption === 'number') {
+      this.speed = 1; // reset speed
+      if (speedOption > 0) {
+        this.speed += speedOption / 40;
       } else {
-        this.speed += speed / 101;
+        this.speed += speedOption / 101;
       }
     }
 
@@ -282,7 +285,6 @@ class ArcProgress {
     if (this.animation === false) {
       this.percentage = this.progress;
     }
-    console.log(this.isEnd, 99999)
     this.isEnd = this.percentage === this.progress;
 
     this.ctx.clearRect(0, 0, this.size, this.size);
@@ -302,7 +304,7 @@ class ArcProgress {
   }
 
   private resetOptions = (option: any): void => {
-    const {progress, thickness, textStyle, size} = option || {};
+    const {progress, thickness, textStyle, size, speed} = option;
     if (typeof progress === 'number') {
       this.type = progress > this.progress ? 'increase' : 'decrease';
       this.progress = progress;
@@ -313,16 +315,18 @@ class ArcProgress {
       this.textStyle = {...this.textStyle, ...textStyle};
     if (size)
       this.size = size * 2; // HD mode
+    if (typeof speed === 'number')
+      this.speedOption = speed; // HD mode
   }
 
   public updateProgress(updateOption: Omit<Options, 'el'>): void {
     prevProgress = this.progress;
     prevText = this.text;
-    const {progress, thickness, textStyle, size, ...restOption} = updateOption;
+    const {progress, thickness, textStyle, size, speed, ...restOption} = updateOption;
     const setProgress = progress * 100;
     if (!this.isEnd || prevProgress === setProgress) return;
 
-    this.resetOptions({progress: setProgress, thickness, textStyle, size});
+    this.resetOptions({progress: setProgress, thickness, textStyle, size, speed});
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
 
     this.init(true);

@@ -31,10 +31,6 @@ interface Options {
 }
 
 const PI = Math.PI;
-let lastNumber: number = 0;
-let prevProgress: number = 0;
-let prevText: string = '0';
-let textValue: number = 0;
 
 class ArcProgress {
   public size: number;
@@ -62,6 +58,10 @@ class ArcProgress {
   private currentText: string;
   private increaseValue: number = 0;
   private frequency: number = 0;
+  private lastNumber: number = 0;
+  private prevProgress: number = 0;
+  private prevText: string = '0';
+  private textValue: number = 0;
 
   constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: Options) {
     this.size = (size || 200) * 2; // HD mode
@@ -146,7 +146,7 @@ class ArcProgress {
   }
 
   private setSpeed(): void {
-    const {speedOption, animation, progress} = this;
+    const {speedOption, animation, progress, prevProgress} = this;
     const dProgress = progress > prevProgress ? progress - prevProgress : prevProgress - progress;
 
     if (animation && typeof animation === 'number') {
@@ -166,7 +166,7 @@ class ArcProgress {
   private setIncreaseValue(): void {
     const {frequency} = this;
     const numberText = Number(this.text);
-    const prevNumberText = Number(prevText);
+    const prevNumberText = Number(this.prevText);
     const dText = numberText > prevNumberText ? numberText - prevNumberText : prevNumberText - numberText;
     let increaseValue = dText / frequency;
     const isIntValue = isInt(this.text);
@@ -179,13 +179,13 @@ class ArcProgress {
 
   private computedText(): string {
     let decimal = this.text.split('.')[1].length;
-
+    let {lastNumber} = this;
     const isIntValue = isInt(this.text);
 
     if (this.type === 'increase') {
-      textValue += this.increaseValue;
+      this.textValue += this.increaseValue;
     } else {
-      textValue -= this.increaseValue;
+      this.textValue -= this.increaseValue;
     }
 
     if (this.isEnd) {
@@ -193,11 +193,11 @@ class ArcProgress {
     } else if (!isIntValue) {
       lastNumber = lastNumber === 9 ? 0 : lastNumber += 1;
       if (decimal > 1) {
-        return textValue.toFixed(decimal - 1) + lastNumber;
+        return this.textValue.toFixed(decimal - 1) + lastNumber;
       }
-      return textValue.toFixed(0) + `.${lastNumber}`;
+      return this.textValue.toFixed(0) + `.${lastNumber}`;
     } else {
-      return String(Math.floor(textValue));
+      return String(Math.floor(this.textValue));
     }
   }
 
@@ -320,11 +320,11 @@ class ArcProgress {
   }
 
   public updateProgress(updateOption: Omit<Options, 'el'>): void {
-    prevProgress = this.progress;
-    prevText = this.text;
+    this.prevProgress = this.progress;
+    this.prevText = this.text;
     const {progress, thickness, textStyle, size, speed, ...restOption} = updateOption;
     const setProgress = progress * 100;
-    if (!this.isEnd || prevProgress === setProgress) return;
+    if (!this.isEnd || this.prevProgress === setProgress) return;
 
     this.resetOptions({progress: setProgress, thickness, textStyle, size, speed});
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);

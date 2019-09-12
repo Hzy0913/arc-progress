@@ -34,6 +34,7 @@ const PI = Math.PI;
 let lastNumber: number = 0;
 let prevProgress: number = 0;
 let prevText: string = '0';
+let textValue: number = 0;
 
 class ArcProgress {
   public size: number;
@@ -49,7 +50,6 @@ class ArcProgress {
   public customText: textStyle[];
   private percentage: number = 0;
   private speed: number = 1;
-  private textValue: number = 0;
   private type: string = 'increase';
   private isEnd: boolean = false;
   private thickness: number;
@@ -180,9 +180,9 @@ class ArcProgress {
     const isIntValue = isInt(this.text);
 
     if (this.type === 'increase') {
-      this.textValue += this.increaseValue;
+      textValue += this.increaseValue;
     } else {
-      this.textValue -= this.increaseValue;
+      textValue -= this.increaseValue;
     }
 
     if (this.isEnd) {
@@ -190,11 +190,11 @@ class ArcProgress {
     } else if (!isIntValue) {
       lastNumber = lastNumber === 9 ? 0 : lastNumber += 1;
       if (decimal > 1) {
-        return this.textValue.toFixed(decimal - 1) + lastNumber;
+        return textValue.toFixed(decimal - 1) + lastNumber;
       }
-      return this.textValue.toFixed(0) + `.${lastNumber}`;
+      return textValue.toFixed(0) + `.${lastNumber}`;
     } else {
-      return String(Math.floor(this.textValue));
+      return String(Math.floor(textValue));
     }
   }
 
@@ -282,6 +282,7 @@ class ArcProgress {
     if (this.animation === false) {
       this.percentage = this.progress;
     }
+    console.log(this.isEnd, 99999)
     this.isEnd = this.percentage === this.progress;
 
     this.ctx.clearRect(0, 0, this.size, this.size);
@@ -303,9 +304,8 @@ class ArcProgress {
   private resetOptions = (option: any): void => {
     const {progress, thickness, textStyle, size} = option || {};
     if (typeof progress === 'number') {
-      const setProgress = progress * 100;
-      this.type = setProgress > this.progress ? 'increase' : 'decrease';
-      this.progress = setProgress;
+      this.type = progress > this.progress ? 'increase' : 'decrease';
+      this.progress = progress;
     }
     if (thickness)
       this.thickness = thickness * 2;
@@ -316,12 +316,13 @@ class ArcProgress {
   }
 
   public updateProgress(updateOption: Omit<Options, 'el'>): void {
-    if (!this.isEnd) return;
     prevProgress = this.progress;
     prevText = this.text;
-
     const {progress, thickness, textStyle, size, ...restOption} = updateOption;
-    this.resetOptions({progress, thickness, textStyle, size});
+    const setProgress = progress * 100;
+    if (!this.isEnd || prevProgress === setProgress) return;
+
+    this.resetOptions({progress: setProgress, thickness, textStyle, size});
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
 
     this.init(true);

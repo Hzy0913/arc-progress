@@ -5,9 +5,10 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "webpack-dev-server --config build/dev.js",
-    "build": "rimraf lib && webpack --config build/prd.js && npm run movedts && npm run min",
-    "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts && rimraf lib/src",
-    "min": "rimraf dist && mkdir dist && cp lib/index.js dist/arc-progress.min.js"
+    "build": "rimraf lib && npm run prod && npm run movedts && npm run min",
+    "prod": "webpack --config build/prd.js",
+    "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts",
+    "min": "rimraf dist && npm run prod --export && rimraf lib/src"
   },
   "keywords": [
     "arc-progress",

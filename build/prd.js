@@ -1,13 +1,15 @@
 const path = require('path');
 
-const NODE_ENV = process.env.NODE_ENV;
+const ENV = process.env;
+const defaultExport = ENV.npm_config_export;
+
 const prdWebpackConfig = {
   mode: 'production',
   entry: path.resolve(__dirname, '../src/arc-progress.ts'),
   output: {
-    path: path.join(__dirname, '../lib'),
-    filename: 'index.js',
-    libraryExport: 'default',
+    path: path.join(__dirname, defaultExport ? '../dist' : '../lib'),
+    filename: defaultExport ? 'arc-progress.min.js' : 'index.js',
+    libraryExport: defaultExport ? 'default' : undefined,
     library: 'ArcProgress',
     libraryTarget: 'umd'
   },
@@ -34,7 +36,7 @@ const prdWebpackConfig = {
   plugins: []
 };
 
-// if (NODE_ENV !== 'publish') {
+// if (ENV.NODE_ENV !== 'publish') {
 //   prdWebpackConfig.plugins.push(new BundleAnalyzerPlugin())
 // }
 

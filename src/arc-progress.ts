@@ -20,6 +20,7 @@ interface Options {
   progress: number,
   text?: string,
   thickness?: number,
+  fillThickness?: number,
   emptyColor?: string,
   fillColor?: string,
   lineCap?: lineCap,
@@ -51,6 +52,7 @@ class ArcProgress {
   private type: string = 'increase';
   private isEnd: boolean = false;
   private thickness: number;
+  private fillThickness?: number;
   private animationEnd: (e: any) => void;
   private observer: (progress?: number, text?: string) => void;
   private emptyColor: string = '#efefef';
@@ -64,7 +66,7 @@ class ArcProgress {
   private prevText: string = '0';
   private textValue: number = 0;
 
-  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: Options) {
+  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, fillThickness = 0, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: Options) {
     this.size = (size || 200) * 2; // HD mode
     this.arcStart = arcStart;
     this.arcEnd = arcEnd;
@@ -72,6 +74,7 @@ class ArcProgress {
     this.text = text;
     this.el = el;
     this.thickness = (thickness || 12) * 2;
+    this.fillThickness = fillThickness * 2 || this.thickness;
     this.animationEnd = animationEnd;
     this.emptyColor = emptyColor || this.emptyColor;
     this.fillColor = fillColor || this.fillColor;
@@ -83,6 +86,10 @@ class ArcProgress {
     this.speedOption = speed;
 
     this.init();
+  }
+
+  get isEmptyProgressBig(): boolean {
+    return this.thickness >= this.fillThickness;
   }
 
   private init(notCreate?: boolean): void {
@@ -116,7 +123,7 @@ class ArcProgress {
 
   private drawBackground(): void {
     const ctx = this.ctx;
-    const size = this.size / 2;
+    const halfSize = this.size / 2;
     const conversionRate = 180; //  360/2
     const start = this.arcStart / conversionRate * PI;
     const end = this.arcEnd / conversionRate * PI;
@@ -126,7 +133,8 @@ class ArcProgress {
     ctx.lineCap = this.lineCap;
     ctx.strokeStyle = this.emptyColor;
 
-    ctx.arc(size, size, size - this.thickness, start, end, false);
+    const radius = this.isEmptyProgressBig ? halfSize - this.thickness : halfSize - this.thickness - (this.fillThickness - this.thickness);
+    ctx.arc(halfSize, halfSize, radius, start, end, false);
     ctx.stroke();
     ctx.closePath();
   }
@@ -225,11 +233,12 @@ class ArcProgress {
     const {start, end} = this.computedArc();
 
     ctx.beginPath();
-    ctx.lineWidth = this.thickness;
+    ctx.lineWidth = this.fillThickness;
     ctx.lineCap = this.lineCap;
 
     this.setFillColor(ctx);
-    ctx.arc(halfSize, halfSize, halfSize - this.thickness, start, end, false);
+    const radius = this.isEmptyProgressBig ? halfSize - this.fillThickness - (this.thickness - this.fillThickness) : halfSize - this.fillThickness;
+    ctx.arc(halfSize, halfSize, radius, start, end, false);
 
     ctx.stroke();
     ctx.closePath();
@@ -317,7 +326,7 @@ class ArcProgress {
     if (size)
       this.size = size * 2; // HD mode
     if (typeof speed === 'number')
-      this.speedOption = speed; // HD mode
+      this.speedOption = speed;
   }
 
   public updateProgress(updateOption: Omit<Options, 'el'>): void {

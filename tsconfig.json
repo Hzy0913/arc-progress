@@ -14,7 +14,7 @@
   },
   "files": [
     "index.ts",
-    "draw.ts",
+    "demos.ts",
     "arc-progress.ts"
   ],
   "include": [

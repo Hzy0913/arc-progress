@@ -19,7 +19,8 @@
   ],
   "include": [
     "src/*",
-    "example/**/*"
+    "example/**/*",
+    "static/**/*"
   ],
   "exclude": [
     "node_modules"

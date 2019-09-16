@@ -6,6 +6,7 @@ interface textStyle {
   color?: string,
   x?: number,
   y?: number,
+  font?: string,
   length?: number,
 }
 
@@ -191,11 +192,11 @@ class ArcProgress {
     if (this.isEnd) {
       return this.text;
     } else if (!isIntValue) {
-      lastNumber = lastNumber === 9 ? 0 : lastNumber += 1;
+      this.lastNumber = lastNumber === 9 ? 0 : lastNumber + 1;
       if (decimal > 1) {
-        return this.textValue.toFixed(decimal - 1) + lastNumber;
+        return this.textValue.toFixed(decimal - 1) + this.lastNumber;
       }
-      return this.textValue.toFixed(0) + `.${lastNumber}`;
+      return this.textValue.toFixed(0) + `.${this.lastNumber}`;
     } else {
       return String(Math.floor(this.textValue));
     }
@@ -239,11 +240,11 @@ class ArcProgress {
   }
 
   private setText(ctx: CanvasRenderingContext2D, fontSetting: textStyle): void {
-    const {text, size = '14px', color = '#000', x = 10, y = 10} = fontSetting;
+    const {text, size = '14px', color = '#000', x = 10, y = 10, font = 'sans-seri'} = fontSetting;
     const fontSize = parseInt(size) * 2;
     const unit = size.substring(String(fontSize).length) || 'px';
 
-    ctx.font = `${fontSize}${unit} sans-seri`;
+    ctx.font = `${fontSize}${unit} ${font}`;
     ctx.fillStyle = color;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';

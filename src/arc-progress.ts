@@ -11,6 +11,7 @@ interface textStyle {
 }
 
 type lineCap = 'butt' | 'round' | 'square';
+type fillImg = {image: string};
 
 interface Options {
   el: string | HTMLElement
@@ -22,13 +23,14 @@ interface Options {
   thickness?: number,
   fillThickness?: number,
   emptyColor?: string,
-  fillColor?: string,
+  fillColor?: string | fillImg,
   lineCap?: lineCap,
   textStyle?: textStyle,
   customText?: textStyle[],
   speed?: number,
   animation?: boolean | number,
   animationEnd?: (any) => void,
+  imageError?: (any) => void,
   observer?: (progress?: number, text?: string) => void;
 }
 
@@ -54,9 +56,10 @@ class ArcProgress {
   private thickness: number;
   private fillThickness?: number;
   private animationEnd: (e: any) => void;
+  private imageError: (e: any) => void;
   private observer: (progress?: number, text?: string) => void;
   private emptyColor: string = '#efefef';
-  private fillColor: string = '#6bd5c8';
+  private fillColor: string | fillImg = '#6bd5c8';
   private lineCap: lineCap = 'round';
   private currentText: string;
   private increaseValue: number = 0;
@@ -65,6 +68,7 @@ class ArcProgress {
   private prevProgress: number = 0;
   private prevText: string = '0';
   private textValue: number = 0;
+  private fillImage: any;
 
   constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, fillThickness = 0, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: Options) {
     this.size = (size || 200) * 2; // HD mode
@@ -96,7 +100,7 @@ class ArcProgress {
     this.createCanvas(notCreate);
     this.setSpeed();
     this.text && this.setIncreaseValue();
-    this.drawProgressAnimate();
+    this.sourceLoad().then(() => this.drawProgressAnimate()).catch(err => this.imageError(err));
   }
 
   private createCanvas(notCreate?: boolean): void {
@@ -210,20 +214,46 @@ class ArcProgress {
     }
   }
 
-  private setFillColor(ctx: CanvasRenderingContext2D): void {
-    const gradientColors = this.fillColor.split(' ');
-    if (gradientColors.length > 1) {
-      const grad = ctx.createLinearGradient(0, 0, this.size, 0);
-      const length = gradientColors.length;
-      const part = 1/length;
-      let partCount = 0;
-      for (let i = 0; i < length; i++) {
-        grad.addColorStop(partCount, gradientColors[i]);
-        partCount += part;
+  private sourceLoad(): any {
+    return new Promise((resolve, reject) => {
+      if (typeof this.fillColor === 'object') {
+        this.drawBackground(); // show background of progress bar
+
+        const {image} = this.fillColor;
+        const imgInstance = new Image();
+        imgInstance.src = image;
+        imgInstance.onload = () => {
+          this.fillImage = imgInstance;
+          resolve(true);
+        };
+        imgInstance.onerror = (err) => {
+          reject(err);
+        };
+      } else {
+        resolve(false);
       }
-      ctx.strokeStyle = grad;
+    });
+  }
+
+  private setFillColor(ctx: CanvasRenderingContext2D): void {
+    if (this.fillImage) {
+      const pattern = ctx.createPattern(this.fillImage, 'no-repeat');
+      ctx.strokeStyle = pattern;
     } else {
-      ctx.strokeStyle = this.fillColor;
+      const gradientColors = (this.fillColor as string).split(' ');
+      if (gradientColors.length > 1) {
+        const grad = ctx.createLinearGradient(0, 0, this.size, 0);
+        const length = gradientColors.length;
+        const part = 1/length;
+        let partCount = 0;
+        for (let i = 0; i < length; i++) {
+          grad.addColorStop(partCount, gradientColors[i]);
+          partCount += part;
+        }
+        ctx.strokeStyle = grad;
+      } else {
+        ctx.strokeStyle = this.fillColor as string;
+      }
     }
   }
 

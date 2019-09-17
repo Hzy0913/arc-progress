@@ -1,4 +1,4 @@
-import {isInt} from './utils';
+import {isInt, type} from './utils';
 
 interface textStyle {
   text?: string,
@@ -11,7 +11,7 @@ interface textStyle {
 }
 
 type lineCap = 'butt' | 'round' | 'square';
-type fillImg = {image: string};
+type fillType = {image?: string, gradient?: string[]};
 
 interface Options {
   el: string | HTMLElement
@@ -23,14 +23,14 @@ interface Options {
   thickness?: number,
   fillThickness?: number,
   emptyColor?: string,
-  fillColor?: string | fillImg,
+  fillColor?: string | fillType,
   lineCap?: lineCap,
   textStyle?: textStyle,
   customText?: textStyle[],
   speed?: number,
   animation?: boolean | number,
   animationEnd?: (any) => void,
-  imageError?: (any) => void,
+  onError?: (any) => void,
   observer?: (progress?: number, text?: string) => void;
 }
 
@@ -56,10 +56,10 @@ class ArcProgress {
   private thickness: number;
   private fillThickness?: number;
   private animationEnd: (e: any) => void;
-  private imageError: (e: any) => void;
+  private onError: (e: any) => void;
   private observer: (progress?: number, text?: string) => void;
   private emptyColor: string = '#efefef';
-  private fillColor: string | fillImg = '#6bd5c8';
+  private fillColor: string | fillType = '#6bd5c8';
   private lineCap: lineCap = 'round';
   private currentText: string;
   private increaseValue: number = 0;
@@ -70,7 +70,7 @@ class ArcProgress {
   private textValue: number = 0;
   private fillImage: any;
 
-  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, fillThickness = 0, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, observer}: Options) {
+  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, fillThickness = 0, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, onError = () => {}, observer}: Options) {
     this.size = (size || 200) * 2; // HD mode
     this.arcStart = arcStart;
     this.arcEnd = arcEnd;
@@ -80,7 +80,8 @@ class ArcProgress {
     this.thickness = (thickness || 12) * 2;
     this.fillThickness = fillThickness * 2 || this.thickness;
     this.animationEnd = animationEnd;
-    this.emptyColor = emptyColor || this.emptyColor;
+    this.onError = onError;
+    this.emptyColor = emptyColor;
     this.fillColor = fillColor || this.fillColor;
     this.lineCap = lineCap || this.lineCap;
     this.animation = animation;
@@ -100,7 +101,7 @@ class ArcProgress {
     this.createCanvas(notCreate);
     this.setSpeed();
     this.text && this.setIncreaseValue();
-    this.sourceLoad().then(() => this.drawProgressAnimate()).catch(err => this.imageError(err));
+    this.sourceLoad().then(() => this.drawProgressAnimate()).catch(err => this.onError(err));
   }
 
   private createCanvas(notCreate?: boolean): void {
@@ -191,7 +192,6 @@ class ArcProgress {
   }
 
   private computedText(): string {
-    let decimal = this.text.split('.')[1].length;
     let {lastNumber} = this;
     const isIntValue = isInt(this.text);
 
@@ -204,6 +204,8 @@ class ArcProgress {
     if (this.isEnd) {
       return this.text;
     } else if (!isIntValue) {
+      const decimal = this.text.split('.')[1].length;
+
       this.lastNumber = lastNumber === 9 ? 0 : lastNumber + 1;
       if (decimal > 1) {
         return this.textValue.toFixed(decimal - 1) + this.lastNumber;
@@ -216,10 +218,10 @@ class ArcProgress {
 
   private sourceLoad(): any {
     return new Promise((resolve, reject) => {
-      if (typeof this.fillColor === 'object') {
-        this.drawBackground(); // show background of progress bar
+      if (type(this.fillColor) === 'object') {
+        this.drawBackground(); // show background of progress bar when await image load
 
-        const {image} = this.fillColor;
+        const {image} = this.fillColor as fillType;
         const imgInstance = new Image();
         imgInstance.src = image;
         imgInstance.onload = () => {
@@ -236,24 +238,23 @@ class ArcProgress {
   }
 
   private setFillColor(ctx: CanvasRenderingContext2D): void {
-    if (this.fillImage) {
+    const fillColorType = type(this.fillColor);
+    if (fillColorType === 'string') {
+      ctx.strokeStyle = this.fillColor as string;
+    } else if (fillColorType === 'object') {
       const pattern = ctx.createPattern(this.fillImage, 'no-repeat');
       ctx.strokeStyle = pattern;
     } else {
-      const gradientColors = (this.fillColor as string).split(' ');
-      if (gradientColors.length > 1) {
-        const grad = ctx.createLinearGradient(0, 0, this.size, 0);
-        const length = gradientColors.length;
-        const part = 1/length;
-        let partCount = 0;
-        for (let i = 0; i < length; i++) {
-          grad.addColorStop(partCount, gradientColors[i]);
-          partCount += part;
-        }
-        ctx.strokeStyle = grad;
-      } else {
-        ctx.strokeStyle = this.fillColor as string;
+      const {gradient: gradientColors} = this.fillColor as fillType;
+      const grad = ctx.createLinearGradient(0, 0, this.size, 0);
+      const length = gradientColors.length;
+      const part = 1/length;
+      let partCount = 0;
+      for (let i = 0; i < length; i++) {
+        grad.addColorStop(partCount, gradientColors[i]);
+        partCount += part;
       }
+      ctx.strokeStyle = grad;
     }
   }
 

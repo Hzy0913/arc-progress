@@ -1,6 +1,6 @@
 {
   "name": "arc-progress",
-  "version": "0.0.1-beta",
+  "version": "0.0.1",
   "description": "arc-progress circular-progress progress",
   "main": "lib/index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "prod": "webpack --config build/prd.js",
     "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts",
     "min": "rimraf dist && npm run prod --export && rimraf lib/src",
-    "demo": "rimraf preview && webpack --config build/prod-demos.js && rimraf ../preview/static/arc-progress && cp -r preview/ ../preview/static/arc-progress"
+    "demo": "rimraf preview && webpack --config build/prod-demos.js && rimraf ../preview/static/arc-progress && cp -r preview/ ../preview/static/arc-progress",
+    "publish": "npm run prod && npm publish --registry https://registry.npmjs.org"
   },
   "keywords": [
     "arc-progress",

@@ -11,7 +11,7 @@ npm install arc-progress -S
 ```
 ##### 直接引入js文件
 
-如果选使用`<script>`直接引入js文件，可点击下载[arc-progress.min.js](https://github.com/Hzy0913/arc-progress/blob/master/dist/arc-progress.min.js "arc-progress.min.js")文件。
+如果选使用`<script>`直接引入js文件，可点击下载[arc-progress.min.js](https://raw.githubusercontent.com/Hzy0913/arc-progress/master/dist/arc-progress.min.js "arc-progress.min.js")文件。
 ## Usage
 
 ```javascript

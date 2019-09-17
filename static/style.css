@@ -1,0 +1,133 @@
+*{
+  font-family: 'Source Sans Pro', 'Lucida Grande', sans-serif;
+}
+.center{
+  width: 900px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+body{
+  padding-top: 4%;
+}
+.demos-container{
+  margin-bottom: 50px;
+}
+.demos-container>div{
+  float: left;
+  border-radius: 5px;
+  box-shadow: 0px 3px 4px rgba(0,0,0,.14);
+  margin: 10px;
+}
+#progress-container{
+  background-color: #00b4f0;
+}
+#progress-container button{
+  background-color: #00e0ff;
+  color: #3d5875;
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  margin: 4px 0px 2px 10px;
+  float: left;
+  cursor: pointer;
+}
+#progress-container2{
+  background-color: #152d44;
+}
+#progress-container3{
+  position: relative;
+}
+#progress-container3 canvas{
+  position: relative;
+  z-index: 9;
+}
+#progress-container3::after{
+  content: '';
+  display: block;
+  width: 180px;
+  height: 180px;
+  background-color: #3b3a3f;
+  border-radius: 50%;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.docs-container>h1{
+  color: #333;
+  font-size: 36px;
+  text-align: center;
+}
+.docs-container>code{
+  margin: 0 auto;
+  width: 240px;
+  display: block;
+  border: 1px solid #f2f3f3;
+  background-color: #f6f8fa;
+  padding: 10px;
+  padding-left: 45px;
+  border-radius: 3px;
+  color: #33333d;
+  font-size: 16px;
+  letter-spacing: .5px;
+  position: relative;
+}
+.docs-container>code::before {
+  content: '';
+  display: block;
+  width: 30px;
+  height: 20px;
+  background: url("../static/npm.png") no-repeat;
+  background-size: contain;
+  position: absolute;
+  left: 8px;
+  top: 14px;
+}
+.blog-logo{
+  display: block;
+  width: 60px;
+  position: fixed;
+  right: 10px;
+  top: 10px;
+}
+.blog-logo img{
+  width: 100%;
+}
+.docs-container .link{
+  color: #656363;
+  text-align: center;
+}
+.docs-container .link a{
+  color: #67b2f9;
+}
+.docs-container .star-link{
+  text-decoration: none;
+  color: #656363;
+  text-align: center;
+  position: relative;
+  height: 28px;
+  display: block;
+  width: 250px;
+  margin: 0 auto;
+  position: fixed;
+  bottom: 5px;
+  left: 50%;
+  margin-left: -145px;
+}
+.docs-container .star-link::after {
+  content: '';
+  display: block;
+  width: 30px;
+  height: 20px;
+  background: url("../static/gitHub.png") no-repeat;
+  background-size: contain;
+  position: absolute;
+  right: -8px;
+  top: 0px;
+}
+.docs-container .star-link:hover{
+  color: #0a0a0a;
+}

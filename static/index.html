@@ -5,7 +5,7 @@
   <title>arc-progress</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
 </head>
-<body>
+<body style="display: none">
   <section class="demos-container center">
     <div id="progress-container">
       <button id="button">increase</button>
@@ -16,7 +16,9 @@
     <div id="progress-container4"></div>
   </section>
   <section class="docs-container center">
-    <h1>arc-progress.js</h1>
+    <h1>
+      <a href="https://github.com/Hzy0913/arc-progress" target="_blank">arc-progress.js</a>
+    </h1>
     <code>npm install arc-progress -S</code>
     <p class="link">These demos
       <a href="https://github.com/Hzy0913/arc-progress/blob/master/example/draw.ts" target="_blank" >Code</a>
@@ -29,5 +31,10 @@
     <img src="http://img.binlive.cn/upload/1509251478128" alt="arc-progress.js">
   </a>
 
+  <script>
+    window.onload = function () {
+      document.body.style.display = 'block';
+    }
+  </script>
 </body>
 </html>

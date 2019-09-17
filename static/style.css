@@ -57,9 +57,12 @@ body{
 }
 
 .docs-container>h1{
+  text-align: center;
+}
+.docs-container>h1>a{
   color: #333;
   font-size: 36px;
-  text-align: center;
+  text-decoration: none;
 }
 .docs-container>code{
   margin: 0 auto;

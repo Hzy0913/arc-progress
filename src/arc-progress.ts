@@ -44,6 +44,7 @@ class ArcProgress {
   public arcStart: number;
   public arcEnd: number;
   public progress: number;
+  public optionProgress: number;
   public text: string;
   public animation: boolean | number;
   public textStyle: textStyle;
@@ -74,6 +75,7 @@ class ArcProgress {
     this.size = (size || 200) * 2; // HD mode
     this.arcStart = arcStart;
     this.arcEnd = arcEnd;
+    this.optionProgress = progress;
     this.progress = progress * 100;
     this.text = text;
     this.el = el;
@@ -90,18 +92,19 @@ class ArcProgress {
     this.observer = observer;
     this.speedOption = speed;
 
-    this.init();
+    this.init({updateImg: true});
   }
 
   get isEmptyProgressBig(): boolean {
     return this.thickness >= this.fillThickness;
   }
 
-  private init(notCreate?: boolean): void {
+  private init(option?: {notCreate?: boolean, updateImg?:boolean}): void {
+    const {notCreate, updateImg} = option || {};
     this.createCanvas(notCreate);
     this.setSpeed();
     this.text && this.setIncreaseValue();
-    this.sourceLoad().then(() => this.drawProgressAnimate()).catch(err => this.onError(err));
+    this.sourceLoad(updateImg).then(() => this.drawProgressAnimate()).catch(err => this.onError(err));
   }
 
   private createCanvas(notCreate?: boolean): void {
@@ -215,9 +218,9 @@ class ArcProgress {
     }
   }
 
-  private sourceLoad(): any {
+  private sourceLoad(updateImg?: boolean): any {
     return new Promise((resolve, reject) => {
-      if (type(this.fillColor) === 'object') {
+      if (type(this.fillColor) === 'object' && updateImg) {
         this.drawBackground(); // show background of progress bar when await image load
 
         const {image} = this.fillColor as fillType;
@@ -274,7 +277,7 @@ class ArcProgress {
     ctx.closePath();
 
     if (this.isEnd) {
-      this.animationEnd(this);
+      this.animationEnd({progress: this.optionProgress, text: this.text});
     }
   }
 
@@ -346,8 +349,10 @@ class ArcProgress {
   private resetOptions = (option: any): void => {
     const {progress, thickness, textStyle, size, speed} = option;
     if (typeof progress === 'number') {
-      this.type = progress > this.progress ? 'increase' : 'decrease';
-      this.progress = progress;
+      const setProgress = progress * 100;
+      this.type = setProgress > this.progress ? 'increase' : 'decrease';
+      this.progress = setProgress;
+      this.optionProgress = progress;
     }
     if (thickness)
       this.thickness = thickness * 2;
@@ -363,13 +368,12 @@ class ArcProgress {
     this.prevProgress = this.progress;
     this.prevText = this.text;
     const {progress, thickness, textStyle, size, speed, ...restOption} = updateOption;
-    const setProgress = progress * 100;
-    if (!this.isEnd || this.prevProgress === setProgress) return;
+    if (!this.isEnd || this.prevProgress === progress * 100) return;
 
-    this.resetOptions({progress: setProgress, thickness, textStyle, size, speed});
+    this.resetOptions({progress, thickness, textStyle, size, speed});
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
-
-    this.init(true);
+    const updateImg = type(restOption.fillColor) === 'object' && !(restOption.fillColor as fillType).image;
+    this.init({notCreate: true, updateImg});
   }
 
   public destroy(): void {

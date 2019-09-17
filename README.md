@@ -1,7 +1,9 @@
 # arc-progress.js
-
-## 快速开始
-
+<p align="center">
+<a href="">
+<img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-progress.png' width=640/  alt="arc-progress">
+</a>
+</p>
 ## Installation
 ```shell
 npm install arc-progress -S
@@ -79,14 +81,16 @@ class App extends React.Component {
 | arcStart  | number  |设置圆环的起始点，用法见下|
 | arcEnd  | number  |设置圆环的结束点，用法见下|
 | thickness  |  number |设置圆环进度条的厚度|
+| fillThickness  |  number |设置圆环进度条填充内容的厚度，不设置该项时默认与`thickness`一致|
 | emptyColor  | string  |设置圆环进度条为空部分的颜色|
-| fillColor  | string  |设置圆环进度条填充部分的颜色，如设置渐变色可以用空格隔多个颜色|
+| fillColor  | string | object  |设置圆环进度条填充部分的颜色，如设置渐变色可以用空格隔多个颜色，也可以使用图片进行填充，具体用法见下|
 | lineCap  | string  |设置圆环进度条末端的类型，有3个可选的值，分别是：`butt`, `round`, `square`。默认值是 `round`|
 | speed  | number  |设置动画速度阈，范围为-100到100，默认为0|
 | animation  | boolean or number  |设置动画持续时间，单位为毫秒值，当取值为`false`时，没有过渡动画|
 | textStyle  | object  |设置文字样式|
 | customText  | array  |设置圆环进度条填充部分的颜色，如设置渐变色可以用空格隔多个颜色|
 | animationEnd  | function  |进度条动画结束时候的回调|
+| onError  | function  |捕获错误的回调|
 | observer  | function  |监听进度条动画变化时的回调|
 
 
@@ -110,6 +114,8 @@ class App extends React.Component {
 ##### fillColor
 fillColor为被填充的进度条颜色，可以传入色值为其定义颜色。如果想设置渐变色，可以传入多个色值
 如设置 `fillColor: '#fa2323 #234cfa #fac305'` 时，则会产生三个颜色的径向渐变色。
+如使用图片填充，则需要将参数设置为对象格式`{image: url}`，传入图片的url地址，
+例如 `fillColor: {image: 'http://img.com/fillImg'}` 时，则会使用图片进行填充。
 
 ##### textStyle
 设置传入`text`参数的文字样式，它需要为对象类型，可选的内容如下

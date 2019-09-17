@@ -37,7 +37,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       hash: true,
-      template: path.resolve(__dirname, 'index.html'),
+      template: path.resolve(__dirname, '../static/index.html'),
     }),
     new ProgressBarPlugin({
       complete: Chalk.green('█'),

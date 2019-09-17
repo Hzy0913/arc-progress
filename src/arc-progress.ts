@@ -183,9 +183,8 @@ class ArcProgress {
     const prevNumberText = Number(this.prevText);
     const dText = numberText > prevNumberText ? numberText - prevNumberText : prevNumberText - numberText;
     let increaseValue = dText / frequency;
-    const isIntValue = isInt(this.text);
 
-    if (isIntValue && !(Math.floor(increaseValue) % 2) && numberText > frequency) {
+    if (isInt(this.text) && (!(increaseValue % 2) || !(increaseValue % 5))) {
       increaseValue = increaseValue - 1 > 0 ? increaseValue -= 1 : 1;
     }
     this.increaseValue = increaseValue;

@@ -1,6 +1,6 @@
 # arc-progress.js
 <p align="center">
-<a href="http://preview.binlive.cn/arc-progress">
+<a href="">
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-progress.png' width=640/  alt="arc-progress">
 </a>
 </p>
@@ -9,9 +9,10 @@
 ```shell
 npm install arc-progress -S
 ```
-##### 直接引入js文件
+##### Download file
+If you want to add arc-progress files in your project for use `<script>` mode, you can click and download [arc-progress.min.js](https://github.com/Hzy0913/arc-progress/blob/master/dist/arc-progress.min.js "arc-progress.min.js")
+file.
 
-如果选使用`<script>`直接引入js文件，可点击下载[arc-progress.min.js](https://raw.githubusercontent.com/Hzy0913/arc-progress/master/dist/arc-progress.min.js "arc-progress.min.js")文件。
 ## Usage
 
 ```javascript
@@ -28,16 +29,15 @@ npm install arc-progress -S
     size: 200,
     customText,
     observer(e, t) {
-      console.log('监听动画进度', e, t);
+      console.log('observer the animation', e, t);
     },
     animationEnd(e) {
-      console.log('动画执行结束', e);
+      console.log('the animation is end', e);
     }
   });
-
 </script>
 ```
-如果在react或vue中使用，在可以获取真实dom节点的生命周期里进行实例化
+If used in the `React` or `VUE`, instantiate in the life cycle of can get real DOM node.
 ```javascript
 import ArcProgress from 'arc-progress';
 
@@ -53,10 +53,10 @@ class App extends React.Component {
       size: 200,
       customText,
       observer(e, t) {
-        console.log('监听动画进度', e, t);
+        console.log('observer the animation', e, t);
       },
       animationEnd(e) {
-        console.log('动画执行结束', e);
+        console.log('the animation is end', e);
       }
     });
   }
@@ -71,68 +71,68 @@ class App extends React.Component {
 }
 ```
 ## Options
-##### 在实例化时传入如下可选的option
+In the instantiation, pass the following optional option
 
 |  Option  |  type |Description |
 | ------------ | ------------ | ------------ |
-| el  | string or dom (必传) |容器的class 或者 id名，也可以直接传入 dom 节点的引用|
-| size  |  number |生成进度条canvas容器的大小，默认为200|
-| progress  |  number (必传)| 设置进度条的进度，取值范围为0 - 1|
-| text  | string  | 设置进度条文字|
-| arcStart  | number  |设置圆环的起始点，用法见下|
-| arcEnd  | number  |设置圆环的结束点，用法见下|
-| thickness  |  number |设置圆环进度条的厚度|
-| fillThickness  |  number |设置圆环进度条填充内容的厚度，不设置该项时默认与`thickness`一致|
-| emptyColor  | string  |设置圆环进度条为空部分的颜色|
-| fillColor  | string | object  |设置圆环进度条填充部分的颜色，如设置渐变色可以用空格隔多个颜色，也可以使用图片进行填充，具体用法见下|
-| lineCap  | string  |设置圆环进度条末端的类型，有3个可选的值，分别是：`butt`, `round`, `square`。默认值是 `round`|
-| speed  | number  |设置动画速度阈，范围为-100到100，默认为0|
-| animation  | boolean or number  |设置动画持续时间，单位为毫秒值，当取值为`false`时，没有过渡动画|
-| textStyle  | object  |设置文字样式|
-| customText  | array  |设置圆环进度条填充部分的颜色，如设置渐变色可以用空格隔多个颜色|
-| animationEnd  | function  |进度条动画结束时候的回调|
-| onError  | function  |捕获错误的回调|
-| observer  | function  |监听进度条动画变化时的回调|
+| el  | string or dom (required) |The class or id name of dom container,  can also pass in a reference of the dom node|
+| progress  |  number (required)|  Set progress value, the range is 0 - 1 |
+| size  |  number | Generate progress bar canvas container, size by default of 200 |
+| text  | string  | Set the text of progress bar|
+| arcStart  | number  |Start point of the arc, specific usage see below|
+| arcEnd  | number  |End point of the arc, specific usage see below|
+| thickness  |  number |Set the thickness of the arc progress bar|
+| fillThickness  |  number |Set the thickness of the arc progress bar fill content，the default value is same as with `thickness` param when this option is not set|
+| emptyColor  | string  | Set the color of the empty part for the arc progress bar |
+| fillColor  | string or object  | Set the style of the fill part for the arc progress bar, specific usage see below.|
+| lineCap  | string  | Set the style at the end of the arc progress bar, there are three optional values, namely `butt`, `round`, `square`. The default value is `round` |
+| speed  | number  | Set the animation speed threshold, ranging from -100 to 100, default is 0 |
+| animation  | boolean or number  | The duration of the animation in milliseconds. When the value is `false`, there is no transitional animation |
+| textStyle  | object  |Set the style of `text`, specific usage see below|
+| customText  | array  | Custom Text Contents, specific usage see below|
+| animationEnd  | function  | Callback at the end of progress bar animation |
+| onError  | function  | Catch the error callback |
+| observer  | function  | Callback to observer progress bar animation changes |
 
 
 ## Methods
-实例化后可调用的方法
+ Method that can be used after instantiation
 
 |  Name   |Description |
 | ------------ | ------------ |
-| updateProgress  | 更新进度条的方法，传递参数optios如上一致(`el`参数除外)|
-| destroy  | 销毁进度条的方法|
+| updateProgress  |  Update progress bar method, pass parameter optios as above (no have the `el` option) |
+| destroy  |  Destroy the progress Bar |
 
 
 
-## Options 说明
-##### arcStart 和 arcEnd
+## Options Description
+##### arcStart and arcEnd
 
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-small.png' width=240/>
 
-如图所示标注了弧形的起点和重点，方向为顺时针。如果你想绘制一个圆形进度条，可以设置`arcStart`为`-90`，`arcEnd`为`270`。如果想绘制一个半圆，可以设置`arcStart`为`180`，`arcEnd`为`360`。可以根据需要调整绘制起止角度数。
+The start point and end point of the arc are marked as show in the picture, direction is clockwise. If you want to draw a circular progress bar, you can set `arcStart` to `90`, `arcEnd` to `270`. Or if you want to draw a semicircle, you can set `arcStart'to`180', `arcEnd` to `360`. Start and end angles can be adjusted as needed.
 
 ##### fillColor
-fillColor为被填充的进度条颜色，可以传入色值为其定义颜色。如果想设置渐变色，可以传入多个色值
-如设置 `fillColor: '#fa2323 #234cfa #fac305'` 时，则会产生三个颜色的径向渐变色。
-如使用图片填充，则需要将参数设置为对象格式`{image: url}`，传入图片的url地址，
-例如 `fillColor: {image: 'http://img.com/fillImg'}` 时，则会使用图片进行填充。
+
+`fillColor` is the progress bar color of the filled part, which can be passed in as its defined color(for example `#ffee3c`).
+ If want used the **gradient**, the option need to be set to the object type, such as `{gradient: [color 1, color2,  color 2]}`,  it will be have three colors of the radial gradients.
+ If you want use **image** filled, you need to set the option to the object type, the  format is `{image: url}`, and the `url` is address of the picture.
 
 ##### textStyle
-设置传入`text`参数的文字样式，它需要为对象类型，可选的内容如下
+ Set the style of the `text` content, which needs to be the object type. The optional content is as follows
 
 |  Name   |Type |Description |
 | ------------ | ------------ |------------ |
-| size  |string|设置文字大小, 如 `18px`|
-| color  |string| 设置文字颜色, 如 `#fa0556`|
-| font  |string| 设置文字字体, 如 `Microsoft YaHei`|
-| x  |number |设置文字对齐的x轴|
-| y  |number |设置文字对齐的y轴|
+| size  |string| The text size, for example `18px`|
+| color  |string| The text color, for example `#fa0556`|
+| font  |string| The text font-family, for example `Microsoft YaHei`|
+| x  |number |X-axis of text position|
+| y  |number |Y-axis of text position|
 
 ##### customText
-customText 选项可以自定义文字内容，它的格式为数组，可以定义多个文字。其每个用法与`textStyle`参数一致，只是多了`text`字段。
+`customText` option to custom the some text contents,  It is an array type.  You can define more than one text. Each usage is consistent with the `textStyle` option,  but it have one more item is `text`, this is used show you definition text content.
 
 |  Name   |Type |Description |
 | ------------ | ------------ |------------ |
-| text  |string|设置文字内容|
-| others  || 其他参数内容与`textStyle`用法一致|
+| text  |string|Set the text content|
+| others  ||  Other parameters are same as with the usage of `textStyle` |

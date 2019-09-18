@@ -276,6 +276,8 @@ class ArcProgress {
     ctx.stroke();
     ctx.closePath();
 
+    this.observer && this.observer(this.percentage, this.currentText);
+
     if (this.isEnd) {
       this.animationEnd({progress: this.optionProgress, text: this.text});
     }
@@ -335,12 +337,12 @@ class ArcProgress {
     this.drawText();
     this.drawProgress();
 
-    this.observer && this.observer(this.percentage, this.currentText);
+    if (this.isEnd) return;
 
-    if (this.type === 'increase' && this.percentage < this.progress) {
+    if (this.type === 'increase') {
       this.accumulation();
       this.requestAnimationFrame(this.drawProgressAnimate);
-    } else if (this.type === 'decrease' && this.percentage > this.progress) {
+    } else if (this.type === 'decrease') {
       this.accumulation();
       this.requestAnimationFrame(this.drawProgressAnimate);
     }

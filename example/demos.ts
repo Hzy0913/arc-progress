@@ -55,7 +55,7 @@ new ArcProgress({
 function getTodayProgress(): any {
   const oneDayTimeStamp = 86400000;
   const today = new Date();
-  const todatTimeStamp = +new Date(`${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`)
+  const todatTimeStamp = +new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0);
   const TomorrowTimeStamp = todatTimeStamp + oneDayTimeStamp;
   const todayRemaining = TomorrowTimeStamp - +today;
 

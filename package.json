@@ -1,6 +1,6 @@
 {
   "name": "arc-progress",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "arc-progress circular-progress progress",
   "main": "lib/index.js",
   "scripts": {

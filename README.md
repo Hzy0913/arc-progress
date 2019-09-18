@@ -1,6 +1,7 @@
 # arc-progress.js
+#### Arc animation progress bar drawn by canvas [中文文档](https://github.com/Hzy0913/arc-progress/blob/master/README_zh.md "中文文档")
 <p align="center">
-<a href="">
+<a href="http://preview.binlive.cn/arc-progress">
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-progress.png' width=640/  alt="arc-progress">
 </a>
 </p>
@@ -9,9 +10,8 @@
 ```shell
 npm install arc-progress -S
 ```
-##### Download file
-If you want to add arc-progress files in your project for use `<script>` mode, you can click and download [arc-progress.min.js](https://github.com/Hzy0913/arc-progress/blob/master/dist/arc-progress.min.js "arc-progress.min.js")
-file.
+##### Download file ⬇️
+If you want to add arc-progress files in your project for use `<script>`, you can click and download [arc-progress.min.js](https://raw.githubusercontent.com/Hzy0913/arc-progress/master/dist/arc-progress.min.js "arc-progress.min.js") file.
 
 ## Usage
 

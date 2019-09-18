@@ -38,6 +38,8 @@ npm install arc-progress -S
 </script>
 ```
 如果在react或vue中使用，在可以获取真实dom节点的生命周期里进行实例化
+
+在React中:
 ```javascript
 import ArcProgress from 'arc-progress';
 

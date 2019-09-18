@@ -19,6 +19,10 @@
   ],
   "author": "Hzy0913",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hzy0913/arc-progress/issues"
+  },
+  "homepage": "https://github.com/Hzy0913/arc-progress#readme",
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.1",
     "chalk": "^2.4.2",

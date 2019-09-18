@@ -11,7 +11,7 @@
 npm install arc-progress -S
 ```
 ##### Download file ⬇️
-If you want to add arc-progress files in your project for use `<script>`, you can click and download [arc-progress.min.js](https://raw.githubusercontent.com/Hzy0913/arc-progress/master/dist/arc-progress.min.js "arc-progress.min.js") file.
+If you want to add arc-progress files in your project for use `<script>`, you can click and download ️[arc-progress.min.js](https://raw.githubusercontent.com/Hzy0913/arc-progress/master/dist/arc-progress.min.js "arc-progress.min.js") file.
 
 ## Usage
 
@@ -38,6 +38,8 @@ If you want to add arc-progress files in your project for use `<script>`, you ca
 </script>
 ```
 If used in the `React` or `VUE`, instantiate in the life cycle of can get real DOM node.
+
+in the React code:
 ```javascript
 import ArcProgress from 'arc-progress';
 

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "target": "es5",
     "module": "commonjs",
     "skipDefaultLibCheck": true,
@@ -10,7 +11,9 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "removeComments": true,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "files": [
     "index.ts",

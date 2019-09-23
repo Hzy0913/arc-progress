@@ -35,6 +35,9 @@
     "progress-bar-webpack-plugin": "^1.12.1",
     "rimraf": "^3.0.0",
     "style-loader": "^0.23.1",
+    "tslint": "^5.20.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-loader": "^3.5.4",
     "typescript": "^3.6.2",
     "url-loader": "^2.1.0",
     "vconsole": "^3.2.2",
@@ -42,5 +45,11 @@
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.14"
+  },
+  "dependencies": {
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
   }
 }

@@ -1,5 +1,5 @@
-# arc-progress.js
-#### Arc animation progress bar drawn by canvas [中文文档](https://github.com/Hzy0913/arc-progress/blob/master/README_zh.md "中文文档")
+# react-arc-progress.js
+####  Arc animation progress bar drawn by canvas for react component [中文文档](https://github.com/Hzy0913/arc-progress/blob/master/README_zh.md "中文文档")
 <p align="center">
 <a href="http://preview.binlive.cn/arc-progress">
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-progress.png' width=640/  alt="arc-progress">
@@ -8,76 +8,44 @@
 
 ## Installation
 ```shell
-npm install arc-progress -S
+npm install react-arc-progress -S
 ```
-##### Download file ⬇️
-If you want to add arc-progress files in your project for use `<script>`, you can click and download ️[arc-progress.min.js](https://raw.githubusercontent.com/Hzy0913/arc-progress/master/dist/arc-progress.min.js "arc-progress.min.js") file.
 
 ## Usage
 
 ```javascript
-<div id='progress-container'></div>
+import ArcProgress from 'react-arc-progress';
 
-<script>
-  const customText = [{text: '%', size: '12px', color: '#000', x: 142, y:102}];
-
-  const arcProgress = new ArcProgress({
-    el: '#progress-container',
-    progress: .68,
-    speed: 5,
-    value: '5439.92',
-    size: 200,
-    customText,
-    observer(e, t) {
-      console.log('observer the animation', e, t);
-    },
-    animationEnd(e) {
-      console.log('the animation is end', e);
-    }
-  });
-</script>
-```
-If used in the `React` or `VUE`, instantiate in the life cycle of can get real DOM node.
-
-in the React code:
-```javascript
-import ArcProgress from 'arc-progress';
-
-class App extends React.Component {
-  componentDidMount() {
-    const customText = [{text: '%', size: '12px', color: '#000', x: 142, y:102}];
-
-    const arcProgress = new ArcProgress({
-      el: '#progress-container',
-      progress: .68,
-      speed: 5,
-      value: '5439.92',
-      size: 200,
-      customText,
-      observer(e, t) {
-        console.log('observer the animation', e, t);
-      },
-      animationEnd(e) {
-        console.log('the animation is end', e);
-      }
-    });
+export default class MyArcProgress extends Component {
+  state = {
+    progress: .782,
+    text: '6439.68',
   }
-
+  
   render() {
-    return(
-      <div>
-        <div id='progress-container' />
-      </div>
+    const {progress, text} = this.state;
+    
+    return (
+      <ArcProgress
+        progress={progress}
+        text={text}
+        observer={(current) => {
+          const { percentage, currentText } = current;
+          console.log('observer:', percentage, currentText);
+        }}
+        animationEnd={({ progress, text }) => {
+          console.log('animationEnd', progress, text);
+        }}
+      />
     );
   }
 }
 ```
-## Options
-In the instantiation, pass the following optional option
+
+## Props options
 
 |  Option  |  type |Description |
 | ------------ | ------------ | ------------ |
-| el  | string or dom (required) |The class or id name of dom container,  can also pass in a reference of the dom node|
 | progress  |  number (required)|  Set progress value, the range is 0 - 1 |
 | size  |  number | Generate progress bar canvas container, size by default of 200 |
 | text  | string  | Set the text of progress bar|
@@ -97,13 +65,7 @@ In the instantiation, pass the following optional option
 | observer  | function  | Callback to observer progress bar animation changes |
 
 
-## Methods
- Method that can be used after instantiation
 
-|  Name   |Description |
-| ------------ | ------------ |
-| updateProgress  |  Update progress bar method, pass parameter optios as above (no have the `el` option) |
-| destroy  |  Destroy the progress Bar |
 
 
 

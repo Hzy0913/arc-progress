@@ -13,7 +13,7 @@ body{
 .demos-container{
   margin-bottom: 50px;
 }
-.demos-container>div{
+.arc-progress-container>div{
   float: left;
   border-radius: 5px;
   box-shadow: 0px 3px 4px rgba(0,0,0,.14);
@@ -21,6 +21,15 @@ body{
 }
 .progress-container{
   background-color: #00b4f0;
+  position: relative;
+}
+.progress-container canvas{
+  margin-top: 25px;
+}
+.progress-container .buttons{
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .progress-container button{
   background-color: #00e0ff;
@@ -32,17 +41,17 @@ body{
   float: left;
   cursor: pointer;
 }
-#progress-container2{
+.progress-container2{
   background-color: #152d44;
 }
-#progress-container3{
+.progress-container3{
   position: relative;
 }
-#progress-container3 canvas{
+.progress-container3 canvas{
   position: relative;
   z-index: 9;
 }
-#progress-container3::after{
+.progress-container3::after{
   content: '';
   display: block;
   width: 180px;

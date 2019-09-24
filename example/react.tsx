@@ -21,7 +21,7 @@ class App extends React.Component<IAppProps, IAppState> {
     super(props);
     const { progress, text: customtext } = this.getTodayProgress();
     this.state = {
-      progress: .78,
+      progress: .782,
       text: '6439.68',
       text4: '78.26',
       progress4: .7826,
@@ -75,9 +75,8 @@ class App extends React.Component<IAppProps, IAppState> {
     const { progress, text, progress3, progress4, text4, customText } = this.state;
 
     return (
-      <div>
+      <div className="arc-progress-container">
         <ArcProgress
-          key={1}
           {...arcProgress}
           progress={progress}
           text={text}
@@ -89,18 +88,21 @@ class App extends React.Component<IAppProps, IAppState> {
             console.log('animationEnd', progress, text);
           }}
         >
-          <button onClick={() => this.setState({ progress: .89, text: '7347.84' })}>
-            increase
-          </button>
-          <button onClick={() => this.setState({ progress: .31, text: '2559.36' })}>
-            decrease
-          </button>
+          <div className="buttons">
+            <button onClick={() => this.setState({ progress: .89, text: '7347.84' })}>
+              increase
+            </button>
+            <button onClick={() => this.setState({ progress: .31, text: '2559.36' })}>
+              decrease
+            </button>
+          </div>
         </ArcProgress>
         <ArcProgress
-          key={2}
+          className="progress-container2"
           {...arcProgress2}
         />
         <ArcProgress
+          className="progress-container3"
           {...arcProgress3}
           progress={progress3}
           customText={customText}
@@ -120,7 +122,6 @@ class App extends React.Component<IAppProps, IAppState> {
             }, 500);
           }}
         />
-
       </div>
     );
   }

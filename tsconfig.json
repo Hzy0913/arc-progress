@@ -16,9 +16,9 @@
     "esModuleInterop": true
   },
   "files": [
-    "index.ts",
-    "demos.ts",
-    "arc-progress.ts"
+    "example/demos.ts",
+    "example/react.tsx",
+    "src/arc-progress.tsx"
   ],
   "include": [
     "src/*",

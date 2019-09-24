@@ -1,5 +1,16 @@
 import React, { useEffect, useRef } from 'react';
-import { isInt, dataType, useCacheState } from './utils';
+import {
+  setSpeed,
+  setIncreaseValue,
+  sourceLoad,
+  computedArc,
+  requestAnimationFrame,
+  getDProgress,
+  computedPercentage,
+  computedText,
+  PI,
+} from './computed';
+import { dataType, useCacheState } from './utils';
 
 export type lineCap = 'butt' | 'round' | 'square';
 
@@ -47,90 +58,15 @@ export interface Options {
   onError?: (any) => void;
   observer?: (current: {percentage: number, currentText: string}) => void;
 }
-const PI = Math.PI;
-
-const setSpeed = (dProgress, speedOption, animation): number => {
-  let speed: number = 1;
-  if (animation && typeof animation === 'number') {
-    speed = dProgress / (animation / (1000 / 60));
-  } else if (typeof speedOption === 'number') {
-    speed = 1; // reset speed
-    if (speedOption > 0) {
-      speed += speedOption / 40;
-    } else {
-      speed += speedOption / 101;
-    }
-  }
-
-  return speed;
-};
-
-const setIncreaseValue = (dProgress, prevText = '0', speed, text): number => {
-  const frequency = dProgress / speed; // add this line
-
-  const numberText = Number(text);
-  const prevNumberText = Number(prevText);
-  const dText = numberText > prevNumberText ? numberText - prevNumberText
-    : prevNumberText - numberText;
-  let increaseValue = dText / frequency;
-
-  if (isInt(text) && (!(increaseValue % 2) || !(increaseValue % 5))) {
-    increaseValue = increaseValue - 1 > 0 ? increaseValue -= 1 : 1;
-  }
-  return increaseValue;
-};
-
-const sourceLoad = (fillColor, updateImg?: boolean): any => {
-  return new Promise((resolve, reject) => {
-    if (dataType(fillColor) === 'object' && updateImg) {
-      const { image } = fillColor as fillType;
-      const imgInstance = new Image();
-      imgInstance.src = image;
-      imgInstance.onload = () => {
-        resolve({ img: imgInstance, src: image });
-      };
-      imgInstance.onerror = (err) => {
-        reject(err);
-      };
-    } else {
-      resolve(false);
-    }
-  });
-};
-
-const computedArc = (arcStart, arcEnd, percentage): {start: number, end: number} => {
-  const conversionRate = 180; //  360/2
-
-  const start = arcStart / conversionRate;
-  const end = arcEnd / conversionRate;
-
-  const degreeCount = end - start;
-  const progress = degreeCount * (percentage / 100) + start;
-  const endPI = progress * PI;
-  const startPI = start * PI;
-
-  return { start: startPI, end: endPI };
-};
-
-const requestAnimationFrame = (cb) => {
-  return window.requestAnimationFrame(cb);
-};
-
-// let prevProgress: number;
-// let prevText: string;
-// let currentText: string;
-// let fillImage: {img: any, src: string};
 
 function arcProgress(props: Options) {
   const canvasRef = useRef(null);
   const [cacheState, setCacheState] = useCacheState();
 
-  let ctx;
+  let ctx: CanvasRenderingContext2D;
   let type: string = 'increase';
-  let speed;
-  let increaseValue;
-  // let percentage: number = 0;
-  // let cacheState: Function;
+  let speed: number;
+  let increaseValue: number;
 
   const { size = 200, arcStart = 144, arcEnd = 396, text, animationEnd, emptyColor = '#efefef',
     fillColor = '#6bd5c8', lineCap = 'round', animation, textStyle: setTextStyle = {},
@@ -144,9 +80,11 @@ function arcProgress(props: Options) {
   const fillThickness = props.fillThickness * 2 || thickness;
   const textStyle = { size: '18px', color: '#000', x: size / 2, y: size / 2, ...setTextStyle };
 
+  const computedCurrentText = computedText();
+
   const init = (updateImg): void => {
     const { prevProgress, prevText } = cacheState;
-    const dProgress = getDProgress(prevProgress);
+    const dProgress = getDProgress(prevProgress, progress);
     speed = setSpeed(dProgress, speedOption, animation);
 
     if (text) {
@@ -163,53 +101,6 @@ function arcProgress(props: Options) {
     })
     .catch(err => onError && onError(err));
   };
-
-  const getDProgress = (prevProgress: number = 0) => progress > prevProgress ?
-    progress - prevProgress : prevProgress - progress;
-
-  const computedPercentage = (type, currentPercentage, speed): number => {
-    let percentage = currentPercentage;
-    if (type === 'increase') {
-      percentage += speed;
-      if (percentage > progress) {
-        percentage = progress;
-      }
-    } else {
-      percentage -= speed;
-      if (percentage < progress) {
-        percentage = progress;
-      }
-    }
-    return percentage;
-  };
-
-  const computedText = ((): Function => {
-    let lastNumber: number = 0;
-    let { textValue } = cacheState;
-
-    return function (text, isEnd, type, increaseValue) {
-      const isIntValue = isInt(text);
-      if (type === 'increase') {
-        textValue += increaseValue;
-      } else {
-        textValue -= increaseValue;
-      }
-      setCacheState({ textValue });
-      if (isEnd) return text;
-
-      if (!isIntValue) {
-        const decimal = text.split('.')[1].length;
-
-        lastNumber = lastNumber === 9 ? 0 : lastNumber + 1;
-        if (decimal > 1) {
-          return textValue.toFixed(decimal - 1) + lastNumber;
-        }
-        return `${textValue.toFixed(0)}.${lastNumber}`;
-      }
-
-      return String(Math.floor(textValue));
-    };
-  })();
 
   const setText = (textSetting: TextStyle): void => {
     const { text, size = '14px', color = '#000', x = 10, y = 10, font = 'sans-seri' } = textSetting;
@@ -243,7 +134,9 @@ function arcProgress(props: Options) {
   };
 
   const drawText = (): void => {
-    const countText = text && computedText(text, cacheState.isEnd, type, increaseValue);
+    const { isEnd, textValue } = cacheState;
+    const countText = text && computedCurrentText(text, isEnd, type, increaseValue,
+      textValue, setCacheState);
     let textContent = [];
 
     if (countText) {
@@ -309,8 +202,7 @@ function arcProgress(props: Options) {
       percentage = progress;
     }
     const isEnd = percentage === progress;
-
-    setCacheState({ isEnd, percentage: computedPercentage(type, percentage, speed) });
+    setCacheState({ isEnd, percentage: computedPercentage(progress, type, percentage, speed) });
 
     ctx.clearRect(0, 0, hdSize, hdSize);
     drawBackground();
@@ -331,10 +223,10 @@ function arcProgress(props: Options) {
   }, []);
 
   useEffect(() => {
-    if (!cacheState.isEnd) return; // if animation is running, don't render
+    const { isEnd, prevProgress, fillImage } = cacheState;
+    if (!isEnd || prevProgress === progress) return; // if animation is running, don't render
 
     ctx = canvasRef.current.getContext('2d');
-    const { prevProgress, fillImage } = cacheState;
     type = progress >= prevProgress ? 'increase' : 'decrease';
     const updateSrc = dataType(fillColor) === 'object' && (fillColor as fillType).image;
     const isUpdateImg = !!(updateSrc && fillImage) && (fillImage.src !== updateSrc);

@@ -40,6 +40,7 @@ npm install arc-progress -S
 </script>
 ```
 如果在React中使用，可以使用[react-arc-progress](https://github.com/Hzy0913/arc-progress/tree/react-arc-progress "react-arc-progress") 组件
+
 如果在vue中使用，在可以获取真实dom节点的生命周期里进行实例化
 
 在Vue中:

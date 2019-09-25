@@ -41,6 +41,7 @@ If you want to add arc-progress files in your project for use `<script>`, you ca
 </script>
 ```
 If used in the `React`, can use the [react-arc-progress](https://github.com/Hzy0913/arc-progress/tree/react-arc-progress "react-arc-progress") component.
+
 If used in the `VUE`, instantiate in the life cycle of can get real DOM node.
 
 in the Vue code:

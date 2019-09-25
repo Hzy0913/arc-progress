@@ -5,11 +5,11 @@ const ENV = process.env;
 
 const prdWebpackConfig = {
   mode: 'production',
-  entry: path.resolve(__dirname, '../example/demos.ts'),
+  entry: path.resolve(__dirname, '../example/react.tsx'),
   output: {
     path: path.join(__dirname, '../preview'),
     filename: 'arc-progress.main[hash].js',
-    publicPath: '/arc-progress',
+    publicPath: '/react-arc-progress',
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],

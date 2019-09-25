@@ -5,13 +5,14 @@ const defaultExport = ENV.npm_config_export;
 
 const prdWebpackConfig = {
   mode: 'production',
-  entry: path.resolve(__dirname, '../src/arc-progress.ts'),
+  entry: path.resolve(__dirname, '../src/arc-progress.tsx'),
   output: {
-    path: path.join(__dirname, defaultExport ? '../dist' : '../lib'),
-    filename: defaultExport ? 'arc-progress.min.js' : 'index.js',
-    libraryExport: defaultExport ? 'default' : undefined,
-    library: 'ArcProgress',
-    libraryTarget: 'umd'
+    path: path.join(__dirname, '../lib'),
+    filename: 'index.js',
+    libraryTarget: 'commonjs2'
+  },
+  externals: {
+    react: 'react'
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
@@ -20,7 +21,7 @@ const prdWebpackConfig = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: ['awesome-typescript-loader'],
+        use: ['awesome-typescript-loader']
       },
       {test: /\.css$/, loader: 'style-loader!css-loader'},
       {
@@ -35,9 +36,5 @@ const prdWebpackConfig = {
   },
   plugins: []
 };
-
-// if (ENV.NODE_ENV !== 'publish') {
-//   prdWebpackConfig.plugins.push(new BundleAnalyzerPlugin())
-// }
 
 module.exports = prdWebpackConfig;

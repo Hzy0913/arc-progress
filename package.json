@@ -1,18 +1,19 @@
 {
-  "name": "arc-progress",
-  "version": "0.0.2",
-  "description": "arc-progress circular-progress progress",
+  "name": "react-arc-progress",
+  "version": "1.0.0",
+  "description": "react arc-progress circular-progress progress",
   "main": "lib/index.js",
   "scripts": {
     "start": "webpack-dev-server --config build/dev.js",
-    "build": "rimraf lib && npm run prod && npm run movedts && npm run min",
+    "build": "rimraf lib && npm run prod && npm run movedts",
     "prod": "webpack --config build/prd.js",
-    "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts",
-    "min": "rimraf dist && npm run prod --export && rimraf lib/src",
-    "demo": "rimraf preview && webpack --config build/prod-demos.js && rimraf ../preview/static/arc-progress && cp -r preview/ ../preview/static/arc-progress",
-    "publish": "npm run prod && npm publish --registry https://registry.npmjs.org"
+    "movedts": "cp lib/src/arc-progress.d.ts lib/index.d.ts && rimraf lib/src",
+    "demo": "rimraf preview && webpack --config build/prod-demos.js && rimraf ../preview/static/react-arc-progress && cp -r preview/ ../preview/static/react-arc-progress",
+    "publish": "npm run build && npm publish --registry https://registry.npmjs.org"
   },
   "keywords": [
+    "react",
+    "react-arc-progress",
     "arc-progress",
     "circular-progress",
     "progress"

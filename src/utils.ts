@@ -11,10 +11,9 @@ export function dataType(data: any): dataType {
   return Object.prototype.toString.call(data).match(reg)[0].toLowerCase();
 }
 
-interface SetCacheType {
-  (option: cacheType): void;
-}
-export function useCacheState(): [cacheType, SetCacheType] {
+type setCacheType = (option: cacheType) => void;
+
+export function useCacheState(): [cacheType, setCacheType] {
   const cache: cacheType = {
     prevProgress: undefined,
     prevText: undefined,

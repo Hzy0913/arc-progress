@@ -10,3 +10,4 @@ webpack.prd.js
 preview
 static
 build
+tslint.json

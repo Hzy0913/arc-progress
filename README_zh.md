@@ -1,5 +1,6 @@
 # arc-progress.js
 #### 使用canvas绘制的圆弧形进度条
+#### 如果你想在react中使用，可以使用(https://github.com/Hzy0913/arc-progress/tree/react-arc-progress "react-arc-progress")组件
 <p align="center">
 <a href="http://preview.binlive.cn/arc-progress">
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-progress.png' width=640/  alt="arc-progress">
@@ -38,40 +39,44 @@ npm install arc-progress -S
 
 </script>
 ```
-如果在react或vue中使用，在可以获取真实dom节点的生命周期里进行实例化
+如果在React中使用，可以使用[react-arc-progress](https://github.com/Hzy0913/arc-progress/tree/react-arc-progress "react-arc-progress") 组件
+如果在vue中使用，在可以获取真实dom节点的生命周期里进行实例化
 
-在React中:
+在Vue中:
 ```javascript
-import ArcProgress from 'arc-progress';
+<template>
+  <div>
+    <div id='progress-container' />
+  </div>
+</template>
 
-class App extends React.Component {
-  componentDidMount() {
-    const customText = [{text: '%', size: '12px', color: '#000', x: 142, y:102}];
+<script>
+  import ArcProgress from 'arc-progress';
 
-    const arcProgress = new ArcProgress({
-      el: '#progress-container',
-      progress: .68,
-      speed: 5,
-      value: '5439.92',
-      size: 200,
-      customText,
-      observer(e, t) {
-        console.log('监听动画进度', e, t);
-      },
-      animationEnd(e) {
-        console.log('动画执行结束', e);
+  export default {
+    data () {
+      return {
+        customText: [{text: '%', size: '12px', color: '#000', x: 142, y:102}]
       }
-    });
+    },
+    mounted() {
+      arcProgress = new ArcProgress({
+        el: '#progress-container',
+        progress: .68,
+        speed: 5,
+        value: '5439.92',
+        size: 200,
+        customText: this.customText,
+        observer(e, t) {
+          console.log('observer the animation', e, t);
+        },
+        animationEnd(e) {
+          console.log('the animation is end', e);
+        }
+      });
+    }
   }
-
-  render() {
-    return(
-      <div>
-        <div id='progress-container' />
-      </div>
-    );
-  }
-}
+</script>
 ```
 ## Options
 ##### 在实例化时传入如下可选的option

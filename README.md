@@ -1,5 +1,8 @@
 # arc-progress.js
 #### Arc animation progress bar drawn by canvas [中文文档](https://github.com/Hzy0913/arc-progress/blob/master/README_zh.md "中文文档")
+
+#### If you want to used it in the React, you can use the [react-arc-progress](https://github.com/Hzy0913/arc-progress/tree/react-arc-progress "react-arc-progress") component
+
 <p align="center">
 <a href="http://preview.binlive.cn/arc-progress">
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-progress.png' width=640/  alt="arc-progress">
@@ -37,40 +40,44 @@ If you want to add arc-progress files in your project for use `<script>`, you ca
   });
 </script>
 ```
-If used in the `React` or `VUE`, instantiate in the life cycle of can get real DOM node.
+If used in the `React`, can use the [react-arc-progress](https://github.com/Hzy0913/arc-progress/tree/react-arc-progress "react-arc-progress") component.
+If used in the `VUE`, instantiate in the life cycle of can get real DOM node.
 
-in the React code:
+in the Vue code:
 ```javascript
-import ArcProgress from 'arc-progress';
+<template>
+  <div>
+    <div id='progress-container' />
+  </div>
+</template>
 
-class App extends React.Component {
-  componentDidMount() {
-    const customText = [{text: '%', size: '12px', color: '#000', x: 142, y:102}];
+<script>
+  import ArcProgress from 'arc-progress';
 
-    const arcProgress = new ArcProgress({
-      el: '#progress-container',
-      progress: .68,
-      speed: 5,
-      value: '5439.92',
-      size: 200,
-      customText,
-      observer(e, t) {
-        console.log('observer the animation', e, t);
-      },
-      animationEnd(e) {
-        console.log('the animation is end', e);
+  export default {
+    data () {
+      return {
+        customText: [{text: '%', size: '12px', color: '#000', x: 142, y:102}]
       }
-    });
+    },
+    mounted() {
+      arcProgress = new ArcProgress({
+        el: '#progress-container',
+        progress: .68,
+        speed: 5,
+        value: '5439.92',
+        size: 200,
+        customText: this.customText,
+        observer(e, t) {
+          console.log('observer the animation', e, t);
+        },
+        animationEnd(e) {
+          console.log('the animation is end', e);
+        }
+      });
+    }
   }
-
-  render() {
-    return(
-      <div>
-        <div id='progress-container' />
-      </div>
-    );
-  }
-}
+</script>
 ```
 ## Options
 In the instantiation, pass the following optional option

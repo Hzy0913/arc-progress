@@ -23,6 +23,16 @@ module.exports = {
         test: /\.tsx?$/,
         use: ['awesome-typescript-loader'],
       },
+      {
+        test: /\.tsx?$/,
+        enforce: 'pre',
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'tslint-loader',
+          }
+        ]
+      },
       {test: /\.css$/, loader: 'style-loader!css-loader'},
       {
         test: /\.(png|jpg|gif|svg)$/,

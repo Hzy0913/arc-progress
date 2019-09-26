@@ -1,36 +1,36 @@
-import {isInt, type} from './utils';
+import { isInt, type } from './utils';
 
-interface textStyle {
-  text?: string,
-  size?: string,
-  color?: string,
-  x?: number,
-  y?: number,
-  font?: string,
-  length?: number,
+interface TextStyle {
+  text?: string;
+  size?: string;
+  color?: string;
+  x?: number;
+  y?: number;
+  font?: string;
+  length?: number;
 }
 
 type lineCap = 'butt' | 'round' | 'square';
 type fillType = {image?: string, gradient?: string[]};
 
 interface Options {
-  el: string | HTMLElement
-  size?: number,
-  arcStart?: number,
-  arcEnd?: number,
-  progress: number,
-  text?: string,
-  thickness?: number,
-  fillThickness?: number,
-  emptyColor?: string,
-  fillColor?: string | fillType,
-  lineCap?: lineCap,
-  textStyle?: textStyle,
-  customText?: textStyle[],
-  speed?: number,
-  animation?: boolean | number,
-  animationEnd?: (any) => void,
-  onError?: (any) => void,
+  el: string | HTMLElement;
+  size?: number;
+  arcStart?: number;
+  arcEnd?: number;
+  progress: number;
+  text?: string;
+  thickness?: number;
+  fillThickness?: number;
+  emptyColor?: string;
+  fillColor?: string | fillType;
+  lineCap?: lineCap;
+  textStyle?: TextStyle;
+  customText?: TextStyle[];
+  speed?: number;
+  animation?: boolean | number;
+  animationEnd?: (any) => void;
+  onError?: (any) => void;
   observer?: (progress?: number, text?: string) => void;
 }
 
@@ -47,8 +47,8 @@ class ArcProgress {
   public optionProgress: number;
   public text: string;
   public animation: boolean | number;
-  public textStyle: textStyle;
-  public customText: textStyle[];
+  public textStyle: TextStyle;
+  public customText: TextStyle[];
   private percentage: number = 0;
   private speed: number = 1;
   private speedOption: number = 0;
@@ -71,7 +71,10 @@ class ArcProgress {
   private textValue: number = 0;
   private fillImage: any;
 
-  constructor({size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness, fillThickness = 0, emptyColor, fillColor, lineCap, animation, speed = 0, customText, animationEnd = () => {}, onError = () => {}, observer}: Options) {
+  constructor({ size, el, textStyle = {}, arcStart = 144, arcEnd = 396, progress, text, thickness,
+    fillThickness = 0, emptyColor, fillColor, lineCap, animation, speed = 0, customText,
+    animationEnd = () => {}, onError = () => {}, observer,
+  }: Options) {
     this.size = (size || 200) * 2; // HD mode
     this.arcStart = arcStart;
     this.arcEnd = arcEnd;
@@ -87,12 +90,13 @@ class ArcProgress {
     this.fillColor = fillColor || this.fillColor;
     this.lineCap = lineCap || this.lineCap;
     this.animation = animation;
-    this.textStyle = {size: '18px', color: '#000', x: this.size/4, y: this.size/4, ...textStyle};
+    this.textStyle = { size: '18px', color: '#000', x: this.size / 4,
+      y: this.size / 4, ...textStyle };
     this.customText = customText || [];
     this.observer = observer;
     this.speedOption = speed;
 
-    this.init({updateImg: true});
+    this.init({ updateImg: true });
   }
 
   get isEmptyProgressBig(): boolean {
@@ -100,15 +104,17 @@ class ArcProgress {
   }
 
   private init(option?: {notCreate?: boolean, updateImg?:boolean}): void {
-    const {notCreate, updateImg} = option || {};
+    const { notCreate, updateImg } = option || {};
     this.createCanvas(notCreate);
     this.setSpeed();
     this.text && this.setIncreaseValue();
-    this.sourceLoad(updateImg).then(() => this.drawProgressAnimate()).catch(err => this.onError(err));
+    this.sourceLoad(updateImg).then(() => this.drawProgressAnimate())
+      .catch(err => this.onError(err));
   }
 
   private createCanvas(notCreate?: boolean): void {
-    const el = typeof this.el === 'string' ? <HTMLElement>document.querySelector(this.el) : <HTMLElement>this.el;
+    const el = typeof this.el === 'string' ? <HTMLElement>document.querySelector(this.el)
+      : <HTMLElement>this.el;
 
     if (!notCreate) {
       this.canvas = document.createElement('canvas');
@@ -141,7 +147,8 @@ class ArcProgress {
     ctx.lineCap = this.lineCap;
     ctx.strokeStyle = this.emptyColor;
 
-    const radius = this.isEmptyProgressBig ? halfSize - this.thickness : halfSize - this.thickness - (this.fillThickness - this.thickness);
+    const radius = this.isEmptyProgressBig ? halfSize - this.thickness
+      : halfSize - this.thickness - (this.fillThickness - this.thickness);
     ctx.arc(halfSize, halfSize, radius, start, end, false);
     ctx.stroke();
     ctx.closePath();
@@ -154,20 +161,23 @@ class ArcProgress {
     const end = this.arcEnd / conversionRate;
 
     const degreeCount = end - start;
-    const progress = degreeCount * (this.percentage/100) + start;
+    const progress = degreeCount * (this.percentage / 100) + start;
     const endPI = progress * PI;
 
     const startPI = start * PI;
 
-    return {start: startPI, end: endPI};
+    return { start: startPI, end: endPI };
   }
 
   private setSpeed(): void {
-    const {speedOption, animation, progress, prevProgress} = this;
+    const speedOption = this.speedOption;
+    const animation = this.animation;
+    const progress = this.progress;
+    const prevProgress = this.prevProgress;
     const dProgress = progress > prevProgress ? progress - prevProgress : prevProgress - progress;
 
     if (animation && typeof animation === 'number') {
-      this.speed = dProgress / (animation / (1000/60));
+      this.speed = dProgress / (animation / (1000 / 60));
     } else if (typeof speedOption === 'number') {
       this.speed = 1; // reset speed
       if (speedOption > 0) {
@@ -181,11 +191,11 @@ class ArcProgress {
   }
 
   private setIncreaseValue(): void {
-    const {frequency} = this;
     const numberText = Number(this.text);
     const prevNumberText = Number(this.prevText);
-    const dText = numberText > prevNumberText ? numberText - prevNumberText : prevNumberText - numberText;
-    let increaseValue = dText / frequency;
+    const dText = numberText > prevNumberText ? numberText - prevNumberText
+      : prevNumberText - numberText;
+    let increaseValue = dText / this.frequency;
 
     if (isInt(this.text) && (!(increaseValue % 2) || !(increaseValue % 5))) {
       increaseValue = increaseValue - 1 > 0 ? increaseValue -= 1 : 1;
@@ -194,7 +204,7 @@ class ArcProgress {
   }
 
   private computedText(): string {
-    let {lastNumber} = this;
+    const lastNumber = this.lastNumber;
     const isIntValue = isInt(this.text);
 
     if (this.type === 'increase') {
@@ -205,17 +215,17 @@ class ArcProgress {
 
     if (this.isEnd) {
       return this.text;
-    } else if (!isIntValue) {
+    }
+    if (!isIntValue) {
       const decimal = this.text.split('.')[1].length;
 
       this.lastNumber = lastNumber === 9 ? 0 : lastNumber + 1;
       if (decimal > 1) {
         return this.textValue.toFixed(decimal - 1) + this.lastNumber;
       }
-      return this.textValue.toFixed(0) + `.${this.lastNumber}`;
-    } else {
-      return String(Math.floor(this.textValue));
+      return `${this.textValue.toFixed(0)}.${this.lastNumber}`;
     }
+    return String(Math.floor(this.textValue));
   }
 
   private sourceLoad(updateImg?: boolean): any {
@@ -223,7 +233,7 @@ class ArcProgress {
       if (type(this.fillColor) === 'object' && updateImg) {
         this.drawBackground(); // show background of progress bar when await image load
 
-        const {image} = this.fillColor as fillType;
+        const { image } = this.fillColor as fillType;
         const imgInstance = new Image();
         imgInstance.src = image;
         imgInstance.onload = () => {
@@ -247,10 +257,10 @@ class ArcProgress {
       const pattern = ctx.createPattern(this.fillImage, 'no-repeat');
       ctx.strokeStyle = pattern;
     } else {
-      const {gradient: gradientColors} = this.fillColor as fillType;
+      const { gradient: gradientColors } = this.fillColor as fillType;
       const grad = ctx.createLinearGradient(0, 0, this.size, 0);
       const length = gradientColors.length;
-      const part = 1/length;
+      const part = 1 / length;
       let partCount = 0;
       for (let i = 0; i < length; i++) {
         grad.addColorStop(partCount, gradientColors[i]);
@@ -263,14 +273,16 @@ class ArcProgress {
   private drawProgress(): void {
     const ctx = this.ctx;
     const halfSize = this.size / 2;
-    const {start, end} = this.computedArc();
+    const { start, end } = this.computedArc();
 
     ctx.beginPath();
     ctx.lineWidth = this.fillThickness;
     ctx.lineCap = this.lineCap;
 
     this.setFillColor(ctx);
-    const radius = this.isEmptyProgressBig ? halfSize - this.fillThickness - (this.thickness - this.fillThickness) : halfSize - this.fillThickness;
+    const radius = this.isEmptyProgressBig ?
+      halfSize - this.fillThickness - (this.thickness - this.fillThickness) :
+      halfSize - this.fillThickness;
     ctx.arc(halfSize, halfSize, radius, start, end, false);
 
     ctx.stroke();
@@ -279,13 +291,13 @@ class ArcProgress {
     this.observer && this.observer(this.percentage, this.currentText);
 
     if (this.isEnd) {
-      this.animationEnd({progress: this.optionProgress, text: this.text});
+      this.animationEnd({ progress: this.optionProgress, text: this.text });
     }
   }
 
-  private setText(ctx: CanvasRenderingContext2D, fontSetting: textStyle): void {
-    const {text, size = '14px', color = '#000', x = 10, y = 10, font = 'sans-seri'} = fontSetting;
-    const fontSize = parseInt(size) * 2;
+  private setText(ctx: CanvasRenderingContext2D, fontSetting: TextStyle): void {
+    const { text, size = '14px', color = '#000', x = 10, y = 10, font = 'sans-seri' } = fontSetting;
+    const fontSize = parseInt(size, 10) * 2;
     const unit = size.substring(String(fontSize).length) || 'px';
 
     ctx.font = `${fontSize}${unit} ${font}`;
@@ -302,7 +314,7 @@ class ArcProgress {
     let textContent = [];
 
     if (text) {
-      textContent.push({text, ...this.textStyle});
+      textContent.push({ text, ...this.textStyle });
     }
     textContent = [...textContent, ...this.customText];
     for (let i = 0; i < textContent.length; i++) {
@@ -317,12 +329,14 @@ class ArcProgress {
   private accumulation(): void {
     if (this.type === 'increase') {
       this.percentage += this.speed;
-      if (this.percentage > this.progress)
+      if (this.percentage > this.progress) {
         this.percentage = this.progress;
+      }
     } else {
       this.percentage -= this.speed;
-      if (this.percentage < this.progress)
+      if (this.percentage < this.progress) {
         this.percentage = this.progress;
+      }
     }
   }
 
@@ -349,33 +363,38 @@ class ArcProgress {
   }
 
   private resetOptions = (option: any): void => {
-    const {progress, thickness, textStyle, size, speed} = option;
+    const { progress, thickness, textStyle, size, speed } = option;
     if (typeof progress === 'number') {
       const setProgress = progress * 100;
       this.type = setProgress > this.progress ? 'increase' : 'decrease';
       this.progress = setProgress;
       this.optionProgress = progress;
     }
-    if (thickness)
+    if (thickness) {
       this.thickness = thickness * 2;
-    if (textStyle)
-      this.textStyle = {...this.textStyle, ...textStyle};
-    if (size)
+    }
+    if (textStyle) {
+      this.textStyle = { ...this.textStyle, ...textStyle };
+    }
+    if (size) {
       this.size = size * 2; // HD mode
-    if (typeof speed === 'number')
+    }
+    if (typeof speed === 'number') {
       this.speedOption = speed;
+    }
   }
 
   public updateProgress(updateOption: Omit<Options, 'el'>): void {
     this.prevProgress = this.progress;
     this.prevText = this.text;
-    const {progress, thickness, textStyle, size, speed, ...restOption} = updateOption;
+    const { progress, thickness, textStyle, size, speed, ...restOption } = updateOption;
     if (!this.isEnd || this.prevProgress === progress * 100) return;
 
-    this.resetOptions({progress, thickness, textStyle, size, speed});
+    this.resetOptions({ progress, thickness, textStyle, size, speed });
     Object.keys(restOption || {}).forEach(key => this[key] = restOption[key]);
-    const updateImg = type(restOption.fillColor) === 'object' && !(restOption.fillColor as fillType).image;
-    this.init({notCreate: true, updateImg});
+    const updateImg = type(restOption.fillColor) === 'object' &&
+      !(restOption.fillColor as fillType).image;
+    this.init({ updateImg, notCreate: true });
   }
 
   public destroy(): void {

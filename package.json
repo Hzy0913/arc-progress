@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/Hzy0913/arc-progress#readme",
   "devDependencies": {
+    "@types/react": "^16.9.3",
+    "@types/react-dom": "^16.9.1",
     "awesome-typescript-loader": "^5.2.1",
     "chalk": "^2.4.2",
     "clean-webpack-plugin": "^1.0.0",
@@ -34,6 +36,8 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "html-webpack-plugin": "^3.2.0",
     "progress-bar-webpack-plugin": "^1.12.1",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
     "rimraf": "^3.0.0",
     "style-loader": "^0.23.1",
     "tslint": "^5.20.0",
@@ -46,11 +50,5 @@
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.14"
-  },
-  "dependencies": {
-    "@types/react": "^16.9.2",
-    "@types/react-dom": "^16.9.0",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0"
   }
 }

@@ -1,5 +1,5 @@
 # react-arc-progress.js
-####  Arc animation progress bar drawn by canvas for react component [中文文档](https://github.com/Hzy0913/arc-progress/blob/react-arc-progress/README_zh.md "中文文档")
+####  Arc animation progress bar drawn by canvas for react component [中文文档](https://github.com/Hzy0913/arc-progress/blob/react-arc-progress/README_zh.md "中文文档")，because of the use the React Hook, dependent React version need tobe >= 16.8.0
 <p align="center">
 <a href="http://preview.binlive.cn/react-arc-progress">
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-progress.png' width=640/  alt="react-arc-progress">

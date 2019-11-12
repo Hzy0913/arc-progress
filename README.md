@@ -92,7 +92,7 @@ In the instantiation, pass the following optional option
 | arcStart  | number  |Start point of the arc, specific usage see below|
 | arcEnd  | number  |End point of the arc, specific usage see below|
 | thickness  |  number |Set the thickness of the arc progress bar|
-| fillThickness  |  number |Set the thickness of the arc progress bar fill content，the default value is same as with `thickness` param when this option is not set|
+| fillThickness  |  number |Set the thickness of the arc progress bar fill content, the default value is same as with `thickness` param when this option is not set|
 | emptyColor  | string  | Set the color of the empty part for the arc progress bar |
 | fillColor  | string or object  | Set the style of the fill part for the arc progress bar, specific usage see below.|
 | lineCap  | string  | Set the style at the end of the arc progress bar, there are three optional values, namely `butt`, `round`, `square`. The default value is `round` |

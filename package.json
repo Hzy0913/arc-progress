@@ -1,6 +1,6 @@
 {
   "name": "react-arc-progress",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "react arc-progress circular-progress progress",
   "main": "lib/index.js",
   "scripts": {

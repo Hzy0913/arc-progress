@@ -83,7 +83,7 @@ in the Vue code:
 ## Options
 In the instantiation, pass the following optional option
 
-|  Option  |  type |Description |
+|  Option  |  Type |Description |
 | ------------ | ------------ | ------------ |
 | el  | string or dom (required) |The class or id name of dom container,  can also pass in a reference of the dom node|
 | progress  |  number (required)|  Set progress value, the range is 0 - 1 |

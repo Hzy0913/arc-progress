@@ -154,7 +154,7 @@ function arcProgress(props: Options) {
     const fillColorType = dataType(fillColor);
     if (fillColorType === 'string') {
       ctx.strokeStyle = fillColor as string;
-    } else if (fillColorType === 'object') {
+    } else if (fillColorType === 'object' && (fillColor as fillType).image) {
       const pattern = ctx.createPattern(cacheState.fillImage.img, 'no-repeat');
       ctx.strokeStyle = pattern;
     } else {
@@ -216,8 +216,8 @@ function arcProgress(props: Options) {
 
   useEffect(() => {
     ctx = canvasRef.current.getContext('2d');
-
-    init(true);
+    const isUpdateImg = dataType(fillColor) === 'object' && !!(fillColor as fillType).image;
+    init(isUpdateImg);
 
     setCacheState({ prevProgress: progress, prevText: text });
   }, []);

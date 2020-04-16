@@ -95,8 +95,8 @@ class ArcProgress {
     this.customText = customText || [];
     this.observer = observer;
     this.speedOption = speed;
-
-    this.init({ updateImg: true });
+    const isUpdateImg = type(this.fillColor) === 'object' && !!(<fillType>this.fillColor).image;
+    this.init({ updateImg: isUpdateImg });
   }
 
   get isEmptyProgressBig(): boolean {
@@ -253,7 +253,7 @@ class ArcProgress {
     const fillColorType = type(this.fillColor);
     if (fillColorType === 'string') {
       ctx.strokeStyle = this.fillColor as string;
-    } else if (fillColorType === 'object') {
+    } else if (fillColorType === 'object' && (<fillType>this.fillColor).image) {
       const pattern = ctx.createPattern(this.fillImage, 'no-repeat');
       ctx.strokeStyle = pattern;
     } else {

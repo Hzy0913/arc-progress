@@ -17,7 +17,7 @@ const arcProgress = new ArcProgress({
   size: 200,
   textStyle: { y: 95, size: '24px', color: '#fff' },
   emptyColor: 'rgba(73, 201, 245, .9)',
-  fillColor: { gradient: ['#0c7bb3', '#1498da', '#1498da' ] },
+  fillColor: { gradient: ['#0c7bb3', '#1498da', '#1498da'] },
   observer(e, t) {
     console.log('observer:', e, t);
   },

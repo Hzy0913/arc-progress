@@ -93,7 +93,7 @@ npm install arc-progress -S
 | thickness  |  number |设置圆环进度条的厚度|
 | fillThickness  |  number |设置圆环进度条填充内容的厚度，不设置该项时默认与`thickness`一致|
 | emptyColor  | string  |设置圆环进度条为空部分的颜色|
-| fillColor  | string | object  |设置圆环进度条填充部分的样式，可以设置纯色或渐变色，也可以使用图片进行填充，具体用法见下|
+| fillColor  | string or object  |设置圆环进度条填充部分的样式，可以设置纯色或渐变色，也可以使用图片进行填充，具体用法见下|
 | lineCap  | string  |设置圆环进度条末端的类型，有3个可选的值，分别是：`butt`, `round`, `square`。默认值是 `round`|
 | speed  | number  |设置动画速度阈，范围为-100到100，默认为0|
 | animation  | boolean or number  |设置动画持续时间，单位为毫秒值，当取值为`false`时，没有过渡动画|

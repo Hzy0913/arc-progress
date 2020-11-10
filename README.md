@@ -129,7 +129,7 @@ The start point and end point of the arc are marked as show in the picture, dire
  If you want use **image** filled, you need to set the option to the object type, the  format is `{image: url}`, and the `url` is address of the picture.
 
 ##### textStyle
- Set the style of the `text` content, which needs to be the object type. The optional content is as follows
+ Set the style of the `text` content, which needs to be the object type. The optional content is as follows.
 
 |  Name   |Type |Description |
 | ------------ | ------------ |------------ |

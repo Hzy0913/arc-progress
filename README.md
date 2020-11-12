@@ -3,6 +3,7 @@
 
 #### If you want to used it in the React, you can use the [react-arc-progress](https://github.com/Hzy0913/arc-progress/tree/react-arc-progress "react-arc-progress") component. Because of the use the React Hook, dependent React version need tobe >= 16.8.0 
 
+[Preview](http://preview.binlive.cn/arc-progress "Preview")
 <p align="center">
 <a href="http://preview.binlive.cn/arc-progress">
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-progress.png' width=640/  alt="arc-progress">

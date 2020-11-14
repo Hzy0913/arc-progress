@@ -1,6 +1,9 @@
 # arc-progress.js
 #### 使用canvas绘制的圆弧形进度条
 #### 如果你想在react中使用，可以使用 [react-arc-progress](https://github.com/Hzy0913/arc-progress/tree/react-arc-progress "react-arc-progress") 组件，由于使用了React Hook，依赖的React版本需要 >=16.8.0
+
+[Preview](http://preview.binlive.cn/arc-progress "Preview")
+
 <p align="center">
 <a href="http://preview.binlive.cn/arc-progress">
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-progress.png' width=640/  alt="arc-progress">

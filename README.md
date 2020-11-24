@@ -49,7 +49,7 @@ in the Vue code:
 ```javascript
 <template>
   <div>
-    <div id='progress-container' />
+    <div id="progress-container" />
   </div>
 </template>
 

@@ -20,7 +20,7 @@ If you want to add arc-progress files in your project for use `<script>`, you ca
 ## Usage
 
 ```javascript
-<div id='progress-container'></div>
+<div id="progress-container"></div>
 
 <script>
   const customText = [{text: '%', size: '12px', color: '#000', x: 142, y:102}];

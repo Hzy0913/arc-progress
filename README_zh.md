@@ -20,7 +20,7 @@ npm install arc-progress -S
 ## Usage
 
 ```javascript
-<div id='progress-container'></div>
+<div id="progress-container"></div>
 
 <script>
   const customText = [{text: '%', size: '12px', color: '#000', x: 142, y:102}];
@@ -50,7 +50,7 @@ npm install arc-progress -S
 ```javascript
 <template>
   <div>
-    <div id='progress-container' />
+    <div id="progress-container" />
   </div>
 </template>
 

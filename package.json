@@ -1,6 +1,6 @@
 {
   "name": "react-arc-progress-shamork",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "react arc-progress circular-progress progress",
   "main": "lib/index.js",
   "scripts": {

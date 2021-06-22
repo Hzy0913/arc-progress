@@ -55,9 +55,21 @@ const arcProgress4 = {
   speed: -30,
 };
 
+const arcProgress5 = {
+  size: 200,
+  customText: customText4,
+  textStyle: { size: '34px', color: '#76a4ef', font: 'Arial Black' },
+  emptyColor: '#ebf4f8',
+  fillColor: { image },
+  arcStart: -180,
+  arcEnd: 180,
+  thickness: 18,
+  speed: -30,
+};
 export {
   arcProgress,
   arcProgress2,
   arcProgress3,
   arcProgress4,
+  arcProgress5,
 };

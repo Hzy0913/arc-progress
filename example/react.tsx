@@ -12,7 +12,7 @@ interface IAppState {
   customText: any;
 }
 
-import { arcProgress, arcProgress2, arcProgress3, arcProgress4 } from './demos';
+import { arcProgress, arcProgress2, arcProgress3, arcProgress4, arcProgress5 } from './demos';
 import '../static/style.css';
 import { dateFormat } from './utils';
 
@@ -121,6 +121,12 @@ class App extends React.Component<IAppProps, IAppState> {
               }
             }, 500);
           }}
+        />
+        <ArcProgress
+          progress={0}
+          text={text4}
+          {...arcProgress5}
+          
         />
       </div>
     );

@@ -68,7 +68,7 @@ export default class MyArcProgress extends Component {
 
 <img src='https://raw.githubusercontent.com/Hzy0913/hanlibrary/master/arc-small.png' width=240/>
 
-如图所示标注了弧形的起点和重点，方向为顺时针。如果你想绘制一个圆形进度条，可以设置`arcStart`为`-90`，`arcEnd`为`270`。如果想绘制一个半圆，可以设置`arcStart`为`180`，`arcEnd`为`360`。可以根据需要调整绘制起止角度数。
+如图所示标注了弧形的起点和终点，方向为顺时针。如果你想绘制一个圆形进度条，可以设置`arcStart`为`-90`，`arcEnd`为`270`。如果想绘制一个半圆，可以设置`arcStart`为`180`，`arcEnd`为`360`。可以根据需要调整绘制起止角度数。
 
 ##### fillColor
 fillColor为被填充的进度条颜色，可以传入色值为其定义颜色，如(#fe4d3c)。

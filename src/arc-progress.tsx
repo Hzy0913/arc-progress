@@ -63,6 +63,20 @@ function arcProgress(props: Options) {
   const canvasRef = useRef(null);
   const [cacheState, setCacheState] = useCacheState();
 
+  const maxProgressValue = 1;
+  //[undefined,1,0,-1,2,3,NaN,null,''].map(x=>fixProgress(x))
+  const fixProgress = (p: any): number => {
+    p = parseFloat(p + '');
+    if (!isFinite(p) || p < 0) {
+      p = 0;
+    }
+    else if (p > maxProgressValue) {
+      p = maxProgressValue;
+    }
+    return p;
+  }
+
+
   let ctx: CanvasRenderingContext2D;
   let type: string = 'increase';
   let speed: number;
@@ -74,46 +88,13 @@ function arcProgress(props: Options) {
     children = null,
   } = props || {};
   const hdSize = size * 2; // HD mode
-  const optionProgress = props.progress;
-  const progress = props.progress * 100;
+  const optionProgress = fixProgress(props.progress);
+  const progress = optionProgress * 100;
   const thickness = (props.thickness || 12) * 2;
   const fillThickness = props.fillThickness * 2 || thickness;
   const textStyle = { size: '18px', color: '#000', x: size / 2, y: size / 2, ...setTextStyle };
 
   const computedCurrentText = computedText();
-
-  const init = (updateImg): void => {
-    const { prevProgress, prevText } = cacheState;
-    const dProgress = getDProgress(prevProgress, progress);
-    speed = setSpeed(dProgress, speedOption, animation);
-
-    if (text) {
-      increaseValue = setIncreaseValue(dProgress, prevText, speed, text);
-    }
-
-    drawBackground(); // show background of progress bar when await image load
-
-    sourceLoad(fillColor, updateImg).then((img) => {
-      if (img) {
-        setCacheState({ fillImage: img });
-      }
-      drawProgressAnimate();
-    })
-    .catch(err => onError && onError(err));
-  };
-
-  const setText = (textSetting: TextStyle): void => {
-    const { text, size = '14px', color = '#000', x = 10, y = 10, font = 'sans-seri' } = textSetting;
-
-    const fontSize = parseInt(size, 10) * 2;
-    const unit = size.substring(String(fontSize).length) || 'px';
-
-    ctx.font = `${fontSize}${unit} ${font}`;
-    ctx.fillStyle = color;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, x * 2, y * 2);
-  };
 
   const drawBackground = (): void => {
     const halfSize = hdSize / 2;
@@ -133,6 +114,20 @@ function arcProgress(props: Options) {
     ctx.closePath();
   };
 
+
+  const setText = (textSetting: TextStyle): void => {
+    const { text, size = '14px', color = '#000', x = 10, y = 10, font = 'sans-seri' } = textSetting;
+
+    const fontSize = parseInt(size, 10) * 2;
+    const unit = size.substring(String(fontSize).length) || 'px';
+
+    ctx.font = `${fontSize}${unit} ${font}`;
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x * 2, y * 2);
+  };
+
   const drawText = (): void => {
     const { isEnd, textValue } = cacheState;
     const countText = text && computedCurrentText(text, isEnd, type, increaseValue,
@@ -147,27 +142,6 @@ function arcProgress(props: Options) {
 
     for (let i = 0; i < textContent.length; i++) {
       setText(textContent[i]);
-    }
-  };
-
-  const setFillColor = (): void => {
-    const fillColorType = dataType(fillColor);
-    if (fillColorType === 'string') {
-      ctx.strokeStyle = fillColor as string;
-    } else if (fillColorType === 'object' && (fillColor as fillType).image) {
-      const pattern = ctx.createPattern(cacheState.fillImage.img, 'no-repeat');
-      ctx.strokeStyle = pattern;
-    } else {
-      const { gradient: gradientColors } = fillColor as fillType;
-      const grad = ctx.createLinearGradient(0, 0, hdSize, 0);
-      const length = gradientColors.length;
-      const part = 1 / length;
-      let partCount = 0;
-      for (let i = 0; i < length; i++) {
-        grad.addColorStop(partCount, gradientColors[i]);
-        partCount += part;
-      }
-      ctx.strokeStyle = grad;
     }
   };
 
@@ -195,7 +169,6 @@ function arcProgress(props: Options) {
       animationEnd({ text, progress: optionProgress });
     }
   };
-
   const drawProgressAnimate = (): void => {
     let { percentage } = cacheState;
     if (animation === false) {
@@ -207,11 +180,52 @@ function arcProgress(props: Options) {
     ctx.clearRect(0, 0, hdSize, hdSize);
     drawBackground();
     drawText();
-    drawProgress();
+    if (progress > 0)
+      drawProgress();
 
     if (isEnd) return;
 
     requestAnimationFrame(drawProgressAnimate);
+  };
+  const init = (updateImg): void => {
+    const { prevProgress, prevText } = cacheState;
+    const dProgress = getDProgress(prevProgress, progress);
+    speed = setSpeed(dProgress, speedOption, animation);
+
+    if (text) {
+      increaseValue = setIncreaseValue(dProgress, prevText, speed, text);
+    }
+
+    drawBackground(); // show background of progress bar when await image load
+
+    sourceLoad(fillColor, updateImg).then((img) => {
+      if (img) {
+        setCacheState({ fillImage: img });
+      }
+      drawProgressAnimate();
+    })
+    .catch(err => onError && onError(err));
+  };
+
+  const setFillColor = (): void => {
+    const fillColorType = dataType(fillColor);
+    if (fillColorType === 'string') {
+      ctx.strokeStyle = fillColor as string;
+    } else if (fillColorType === 'object' && (fillColor as fillType).image) {
+      const pattern = ctx.createPattern(cacheState.fillImage.img, 'no-repeat');
+      ctx.strokeStyle = pattern;
+    } else {
+      const { gradient: gradientColors } = fillColor as fillType;
+      const grad = ctx.createLinearGradient(0, 0, hdSize, 0);
+      const length = gradientColors.length;
+      const part = 1 / length;
+      let partCount = 0;
+      for (let i = 0; i < length; i++) {
+        grad.addColorStop(partCount, gradientColors[i]);
+        partCount += part;
+      }
+      ctx.strokeStyle = grad;
+    }
   };
 
   useEffect(() => {
